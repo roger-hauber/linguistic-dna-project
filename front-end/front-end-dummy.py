@@ -5,6 +5,7 @@ import numpy as np
 import streamlit as st
 from io import BytesIO
 import streamlit.components.v1 as components
+import requests
 
 
 st.set_page_config(page_title="Linguistic DNA",
@@ -47,14 +48,35 @@ def st_audiorec():
 
 wav_audio_data = st_audiorec()
 
+
 if wav_audio_data is not None:
     # display audio data as received on the backend
     st.audio(wav_audio_data, format='audio/wav')
 
+params = {
+    "params": ""
+}
+
+#if wav_audio_data is not None:
+   # params['params'] = wav_audio_data
+
+#if file is not None:
+    #params['params'] = file
+
+api_url = 'http://127.0.0.1:8000'
+response = requests.get(api_url)
+
 
 if st.button('**Get results!**'):
-    col1, col2, col3, col4 = st.columns(4)
-    col1.metric("British", "50%")
-    col2.metric("American", "10%")
-    col3.metric("Canadian", "30%")
-    col4.metric("Australian", "10%")
+    dic = response.json()
+    dic['Our']
+    #col1, col2, col3, col4 = st.columns(4)
+    #col1.metric("British", "50%")
+    #col2.metric("American", "10%")
+    #col3.metric("Canadian", "30%")
+    #col4.metric("Australian", "10%")
+
+
+
+#st.session_state
+#st.cashing
