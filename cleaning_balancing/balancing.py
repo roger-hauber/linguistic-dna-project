@@ -74,6 +74,7 @@ def downsampling_per_person(df_presampled: pd.DataFrame, max_num_samples: int = 
     df_downsampled = df_presampled.groupby(by=["client_id", "accent"]).head(max_num_samples).reset_index()
     return df_downsampled
 
+
 def group_per_person(df_presampled: pd.DataFrame) -> pd.DataFrame:
     '''
     Groups data by person,
@@ -183,8 +184,8 @@ def create_balanced_set(path: str,
     # delete rows with missings, non-used accents, word count smaller 9, non-used age groups
     df_sampled = clear_dataframe(df, target_accents, target_ages, min_num_words)
 
-    #  # split into train and test set, save test set if save_test=True (not the default)
-    # df_train, df_test = train_test_split(df, test_size)
+     # split into train and test set, save test set if save_test=True (not the default)
+    # df_train, df_test = train_test_split(df_sampled, test_size=0.3, random_state=0)
     # print('data splitted into train and test set')
     # if save_test:
     #     df_test.to_csv(f'{path}test_set.csv', index=False)
