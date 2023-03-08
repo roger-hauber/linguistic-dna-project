@@ -1,4 +1,7 @@
 from fastapi import FastAPI
+from flask import request
+from fastapi import FastAPI, File, UploadFile
+
 
 app = FastAPI()
 
@@ -6,11 +9,18 @@ app = FastAPI()
 
 
 
-@app.predict('/predict')
-def preprocess(file):
-    f
+@app.post("/upload")
+def upload(file: UploadFile = File(...)):
+    try:
+        with open(file.filename, 'wb') as f:
+            while contents := file.file.read(1024 * 1024):
+                f.write(contents)
+    except Exception:
+        return {"message": "There was an error uploading the file"}
+    finally:
+        file.file.close()
 
-
+    return {"message": f"Successfully uploaded {file.filename}"}
 
 
 
@@ -35,4 +45,7 @@ def predict("data"):
 
 @app.get('/')
 def root():
-    return {"Our":"API"}
+    return {"British":"50%",
+            "American": "20%",
+            "Australian": "10%",
+            "Canadian": "20%"}
