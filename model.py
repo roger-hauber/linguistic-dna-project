@@ -7,10 +7,13 @@ import os
 import tensorflow
 from tensorflow import keras
 from tensorflow.keras.utils import to_categorical
+from tensorflow.keras import layers, Sequential, regularizers
+from keras.layers import Conv2D, MaxPooling2D
+from keras.layers import Dense, Dropout, Activation, Flatten
 
 # set file paths for CSV file and audio files
-csv_path='../raw_data/balanced.csv'
-audio_path='../raw_data/target_clips'
+csv_path='/Users/frido/linguistic-dna-project/raw_data/balanced.csv'
+audio_path='/Users/frido/linguistic-dna-project/raw_data/target_clips/'
 
 # load data from CSV file into a pandas DataFrame
 df = pd.read_csv(csv_path)
@@ -24,6 +27,7 @@ df = df_mini
 df = df.sample(frac=1).reset_index(drop=True)
 
 # add columns to the DataFrame with information about the audio files
+filelengths = [librosa.get_duration(path=file) for file in audio_path+df["path"]]
 df["length"] = filelengths
 df["num_words"] = [len(sent) for sent in df["sentence"].str.split()]
 df["num_words"].sum()/df["length"].sum()
@@ -39,9 +43,10 @@ def trim_pad_audio(file, cutoff=4, sr=22050):
         return aud
     aud = aud[:cutoff*sr,]
     return aud
+print('audio trimmed')
 
 # load audio files and trim/pad them to the specified length
-aud_ser = [trim_pad_audio(file) for file in "../raw_data/target_clips/" + df_mod["path"]]
+aud_ser = [trim_pad_audio(file, cutoff=7) for file in audio_path + df_mod["path"]]
 
 # compute the average length of audio files in the DataFrame
 df_mod["length"].mean()
@@ -51,6 +56,7 @@ lst_mfcc = []
 for aud in aud_ser:
     lst_mfcc.append(librosa.feature.mfcc(y=aud))
 arr_mfcc = np.array(lst_mfcc)
+print('MFCC features computed')
 
 # normalize the MFCC features
 arr_mfcc_mmx = np.array((arr_mfcc-np.min(arr_mfcc))/(np.max(arr_mfcc)-np.min(arr_mfcc)))
@@ -61,6 +67,8 @@ X_test = arr_mfcc_mmx[1800:, :]
 X_train = X_train.reshape((X_train.shape[0], X_train.shape[1], X_train.shape[2], 1))
 X_test = X_test.reshape((X_test.shape[0], X_test.shape[1], X_test.shape[2], 1))
 
+print(X_train[0][:])
+
 # convert accent labels to categorical format
 y_train = df_mod["accent"].iloc[:1800]
 y_test = df_mod["accent"].iloc[1800:]
@@ -70,7 +78,7 @@ y_train_cat = np.array(y_train_cat)
 y_test_cat = np.array(y_test_cat)
 
 # define a base model for a convolutional neural network
-input_shape=(20,173,1)
+input_shape=(20,302,1)
 CNNmodel = Sequential()
 CNNmodel.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=input_shape))
 CNNmodel.add(layers.MaxPooling2D((2, 2)))
@@ -89,7 +97,7 @@ CNNmodel.compile(loss=keras.losses.categorical_crossentropy,
               optimizer=keras.optimizers.Adadelta(),
               metrics=['accuracy'])
 
-history = CNNmodel.fit(X_train, y_train_cat, batch_size=16, validation_split=0.2
+history = CNNmodel.fit(X_train, y_train_cat, batch_size=64,  epochs=20, validation_split=0.2)
 
 # evaluate model on test set                )
 metrics = CNNmodel.evaluate(
@@ -104,12 +112,54 @@ metrics['accuracy']
 
 
 #Alternative Model
-#     model = Sequential()
-#     model.add(layers.Input(shape=input_shape))
-#     model.add(layers.Dense(100, activation="relu", kernel_regularizer=reg))
-#     model.add(layers.BatchNormalization(momentum=0.9))
-#     model.add(layers.Dropout(rate=0.1))
-#     model.add(layers.Dense(50, activation="relu"))
-#     model.add(layers.BatchNormalization(momentum=0.9))  # use momentum=0 to only use statistic of the last seen minibatch in inference mode ("short memory"). Use 1 to average statistics of all seen batch during training histories.
-#     model.add(layers.Dropout(rate=0.1))
-#     model.add(layers.Dense(1, activation="soft_max"))
+# model = Sequential()
+# model.add(layers.Dense(100, activation='relu', input_shape=input_shape))
+# model.add(layers.BatchNormalization(momentum=0.9))
+# model.add(layers.Dropout(rate=0.1))
+# model.add(layers.Dense(50, activation="relu"))
+# model.add(layers.BatchNormalization(momentum=0.9))  # use momentum=0 to only use statistic of the last seen minibatch in inference mode ("short memory"). Use 1 to average statistics of all seen batch during training histories.
+# model.add(layers.Dropout(rate=0.1))
+# model.add(layers.Dense(5, activation="softmax"))
+
+# model.compile(loss=keras.losses.categorical_crossentropy,
+#               optimizer=keras.optimizers.Adadelta(),
+#               metrics=['accuracy'])
+
+# history_2 = model.fit(X_train, y_train_cat, batch_size=16, validation_split=0.2)
+
+# metrics = model.evaluate(
+#         x=X_test,
+#         y=y_test_cat,
+#         batch_size=16,
+#         verbose=0,
+#         # callbacks=None,
+#         return_dict=True)
+
+# print(metrics['accuracy'])
+
+
+#load a model from a different project
+# model_path='/Users/frido/linguistic-dna-project/models/copied_best_CNN.h5'
+# model = keras.models.load_model(model_path)
+
+# metrics = model.evaluate(
+#         x=X_test,
+#         y=y_test_cat,
+#         batch_size=16,
+#         verbose=0,
+#         # callbacks=None,
+#         return_dict=True)
+
+# print(metrics['accuracy'])
+
+from matplotlib import pyplot as plt
+#history = model1.fit(train_x, train_y,validation_split = 0.1, epochs=50, batch_size=4)
+plt.plot(history.history['accuracy'])
+plt.plot(history.history['val_accuracy'])
+plt.title('model accuracy')
+plt.ylabel('accuracy')
+plt.xlabel('epoch')
+plt.legend(['train', 'val'], loc='upper left')
+plt.show()
+
+print('figure plotted')
