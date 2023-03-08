@@ -67,6 +67,12 @@ def clear_dataframe(df: pd.DataFrame,
     print('Dataframe ready to be splitted & balanced')
     return df_presampled
 
+def downsampling_per_person(df_presampled: pd.DataFrame, max_num_samples: int = 5) -> pd.DataFrame:
+    '''
+    including max_num_samples per person
+    '''
+    df_downsampled = df_presampled.groupby(by=["client_id", "accent"]).head(max_num_samples).reset_index()
+    return df_downsampled
 
 def group_per_person(df_presampled: pd.DataFrame) -> pd.DataFrame:
     '''
@@ -165,6 +171,7 @@ def create_balanced_set(path: str,
                         target_accents: list = ['us', 'canada', 'australia', 'england', 'indian'],
                         target_ages: list = ['twenties', 'thirties', 'fourties'],
                         min_num_words: int = 9,
+                        max_num_samples: int = 5,
                         n_male: int = 67,
                         n_female: int = 67,
                         test_size: float = 0.3,
@@ -182,7 +189,9 @@ def create_balanced_set(path: str,
     # if save_test:
     #     df_test.to_csv(f'{path}test_set.csv', index=False)
 
-     # get client_ids that will be included in balanced data set
+    df_downsampled = downsampling_per_person(df_sampled, max_num_samples)
+
+    # get client_ids that will be included in balanced data set
     target_ids = get_target_ids(df_sampled, n_male, n_female)
 
     # create balanced data set, save if save_balanced=True (not the default)
