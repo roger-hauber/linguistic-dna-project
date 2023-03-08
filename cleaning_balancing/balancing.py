@@ -1,7 +1,6 @@
 '''
 To do:
 - include train/test split and infer maximum n_female and n_male from df_train
-- accents and age categories could be made into parameters as well
 '''
 
 import pandas as pd
@@ -10,97 +9,110 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 
 
-# importing raw data
-def load_data(path):
-    df = pd.read_csv(f"{path}validated.tsv", sep="\t", header=0)
+def load_data(path: str, file: str) -> pd.DataFrame:
+    '''
+    Loads data set into a dataframe
+    '''
+    df = pd.read_csv(f"{path}{file}", sep="\t", header=0)
     print('Data loaded')
     return df
 
 
-# creating copy of dataframe and customizing it
-def delete_rows(df, min_num_words = 9):
+def remove_missings(df: pd.DataFrame) -> pd.DataFrame:
     '''
-    Deleting samples with missings in accent, age, gender,
-    Deleting samples with accent other than our 5 target accents,
-    Deleting samples with age equals teens or more than fourty,
-    Deleting samples with less words than min_num_words (default = 9)
+    Deletes samples with missings in accent, age, and/or gender
     '''
-    # Dropping rows with missing values
     df = df.dropna(subset=['accent', 'age', 'gender'])
-
-    # Choose accents
-    df = df[(df['accent'] == 'australia') | (df['accent'] == 'canada') | (df['accent'] == 'indian')
-            | (df['accent'] == 'england') | (df['accent'] == 'us')]
-
-    # Choose age
-    df = df[(df['age'] == 'twenties') | (df['age'] == 'thirties') | (df['age'] == 'fourties')]
-
-    # Count number of words per sample and drop rows with less number of words than min_num_words
-    df["num_words"] = df["sentence"].str.split().apply(len)
-    print('Number of words counted')
-    df = df[df["num_words"] >= min_num_words]
-
-    print('Rows deleted')
     return df
 
 
-# Creating a dataframe grouped by client_id to get number of samples per person
-def group_per_person(df):
+def select_by_accents(df: pd.DataFrame, target_accents: list) -> pd.DataFrame:
     '''
-    Use df with deleted rows;
-    Group data by person, include num_samples = count of samples per person, age,
-    gender, num_words = total number of words per person
+    Only includes samples with accents from target accents list
     '''
-    df_grouped_person = df.groupby(by=["client_id", "accent"]).agg({"path": "count", "age": "min", "gender": "min", "num_words": "sum"}).reset_index()
+    df = df[df.accent.isin(target_accents)]
+    return df
+
+
+def select_by_age_groups(df: pd.DataFrame, target_ages: list) -> pd.DataFrame:
+    '''
+    Only includes samples from age groups from target ages list
+    '''
+    df = df[df.age.isin(target_ages)]
+    return df
+
+
+def select_by_num_words(df: pd.DataFrame, min_num_words: int) -> pd.DataFrame:
+    '''
+    Counts number of words per sample and drops rows with less number of words than min_num_words
+    '''
+    df["num_words"] = df["sentence"].str.split().apply(len)
+    df = df[df["num_words"] >= min_num_words]
+    return df
+
+
+def clear_dataframe(df: pd.DataFrame,
+                    target_accents: list = ['us', 'canada', 'australia', 'england', 'indian'],
+                    target_ages: list = ['twenties', 'thirties', 'fourties'],
+                    min_num_words: int = 9) -> pd.DataFrame:
+    '''
+    Combines functions above: removes missings,
+    selects samples by accents, by age groups, by number of words
+    '''
+    df = remove_missings(df)
+    df = select_by_accents(df, target_accents)
+    df = select_by_age_groups(df, target_ages)
+    df_presampled = select_by_num_words(df, min_num_words)
+
+    print('Dataframe ready to be splitted & balanced')
+    return df_presampled
+
+
+def group_per_person(df_presampled: pd.DataFrame) -> pd.DataFrame:
+    '''
+    Groups data by person,
+    includes num_samples = count of samples per person,
+    age, gender,
+    num_words = count of number of words per person,
+    '''
+    df_grouped_person = df_presampled.groupby(by=["client_id", "accent"]).agg(
+        {"path": "count", "age": "min", "gender": "min", "num_words": "sum"}).reset_index()
     df_grouped_person.rename(columns={"path": "num_samples"}, inplace=True)
 
     return df_grouped_person
 
 
-# Creating a dataframe additionally grouped by accent to get an overview of number of persons and samples per accent
-def group_per_accent(df):
+def get_demographs_per_accent(df_presampled: pd.DataFrame) -> pd.DataFrame:
     '''
-    Use df grouped by person;
-    Group data additionally by accent, include num_persons= count of persos per accents,
-    num_samples = total of samlpes per accent, num_words = minimum number of words in a sample,
+    Creates and displays a Daraframe with number of samples per gender and accents
     '''
-    df_grouped_accent = df.groupby(by="accent").agg({"client_id": "count", "num_samples": "sum", "num_words": "min", "age": "min", "gender": "min"})
-    df_grouped_accent.rename(columns={"client_id": "num_persons"}, inplace=True)
+    df_grouped_person = group_per_person(df_presampled)
 
-    return df_grouped_accent
-
-
-# Creating an overview of female / male samples for accents
-def show_demographs_per_accent(df):
-    '''
-    Use df with deleted rows;
-    Shows overview
-    '''
-    df = group_per_person(df)
-
-    df = df.groupby(by=["client_id", "accent"]).agg({"path": "count", "age": "min", "gender": "min", "num_words": "sum"}).reset_index()
-    df.rename(columns={"path": "num_samples"}, inplace=True)
-    df_demographs_per_accent = df.groupby(by=["accent", "gender"]).agg({"client_id": "count", "num_samples": "sum", "num_words": "min"})
+    df_demographs_per_accent = df_grouped_person.groupby(by=["accent", "gender"]).agg(
+        {"client_id": "count", "num_samples": "sum", "num_words": "min"})
+    df_demographs_per_accent.rename(columns={"client_id": "num_persons"}, inplace=True)
 
     with pd.option_context('display.max_rows', None, 'display.max_columns', None):
         print(df_demographs_per_accent)
 
+    return df_demographs_per_accent
 
-# get a list with client_ids to then create a balanced data set with
-def get_target_ids(df, n_female, n_male):
+
+def get_target_ids(df_presampled: pd.DataFrame,
+                   n_female: str,
+                   n_male: str,
+                   target_accents: list = ['us', 'canada', 'australia', 'england', 'indian']) -> list:
     '''
-    Use df with deleted rows;
-    Creates table with n = 67 of both female and male samples per accent,
+    Creates table with n_female and n_male samples per accent,
     returns a list of client_ids of these samples
     '''
-    accents = ['australia', 'england', 'indian', 'canada', 'us']
     gender = ['female', 'male']
     n = {'female': n_female, 'male': n_male}
     i = 0
 
-    df_grouped = group_per_person(df)
+    df_grouped = group_per_person(df_presampled)
 
-    for a in accents:
+    for a in target_accents:
         for g in gender:
             temp = df_grouped[(df_grouped['accent'] == a) & (df_grouped['gender'] == g)].sample(n[g])
             if i == 0:
@@ -115,10 +127,8 @@ def get_target_ids(df, n_female, n_male):
     return target_ids
 
 
-# create a balanced data set according to the list with client_ids
-def get_balanced_data(df, target_ids):
+def get_balanced_data(df_presampled: pd.DataFrame, target_ids: list) -> pd.DataFrame:
     '''
-    Use df with deleted rows;
     Creates balanced table from target_ids,
     returns dataframe
     '''
@@ -126,34 +136,45 @@ def get_balanced_data(df, target_ids):
 
     for id in target_ids:
         # extracting samples
-        count = df[df['client_id']== id].count()['client_id'] # counting number of samples per client_id
+        count = df_presampled[df_presampled['client_id']== id].count()['client_id'] # counting number of samples per client_id
         if count < 5:
-            temp = df[df['client_id'] == id].sample(n=count) # taking these samples if less than 5
+            temp = df_presampled[df_presampled['client_id'] == id].sample(n=count) # taking these samples if less than 5
         else:
-            temp = df[df['client_id'] == id].sample(n=5) # taking a 5 random samples if more than 5 samples per client_id
+            temp = df_presampled[df_presampled['client_id'] == id].sample(n=5) # taking a 5 random samples if more than 5 samples per client_id
 
         # appending dataframe
         if i == 0:
-            final_data = temp
+            df_balanced = temp
         else:
-            final_data = pd.concat([final_data, temp], axis=0)
+            df_balanced = pd.concat([df_balanced, temp], axis=0)
         i += 1
 
     print('Balanced data set created')
-    return df
+    return df_balanced
 
 
-# saving the balanced data set locally to raw data
-def save_balanced_set(df, path):
-    df.to_csv(f'{path}balanced.csv', index=False)
+def save_balanced_set(df_balanced, path):
+    '''
+    Saves the balanced data set locally to path
+    '''
+    df_balanced.to_csv(f'{path}balanced.csv', index=False)
 
 
-def create_balanced_set(path, n_male = 67, n_female = 67, test_size = 0.3, save_test = False, save_balanced = False):
+def create_balanced_set(path: str,
+                        file: str,
+                        target_accents: list = ['us', 'canada', 'australia', 'england', 'indian'],
+                        target_ages: list = ['twenties', 'thirties', 'fourties'],
+                        min_num_words: int = 9,
+                        n_male: int = 67,
+                        n_female: int = 67,
+                        test_size: float = 0.3,
+                        save_test: bool = False,
+                        save_balanced: bool = False):
      # load raw dataset
-    df = load_data(path)
+    df = load_data(path, file)
 
     # delete rows with missings, non-used accents, word count smaller 9, non-used age groups
-    df = delete_rows(df, min_num_words = 9)
+    df_sampled = clear_dataframe(df, target_accents, target_ages, min_num_words)
 
     #  # split into train and test set, save test set if save_test=True (not the default)
     # df_train, df_test = train_test_split(df, test_size)
@@ -162,13 +183,13 @@ def create_balanced_set(path, n_male = 67, n_female = 67, test_size = 0.3, save_
     #     df_test.to_csv(f'{path}test_set.csv', index=False)
 
      # get client_ids that will be included in balanced data set
-    target_ids = get_target_ids(df, n_male, n_female)
+    target_ids = get_target_ids(df_sampled, n_male, n_female)
 
     # create balanced data set, save if save_balanced=True (not the default)
-    df_train_balanced = get_balanced_data(df, target_ids)
+    df_train_balanced = get_balanced_data(df_sampled, target_ids)
     if save_balanced:
-        save_balanced_set(df, path)
+        save_balanced_set(df_train_balanced, path)
 
     return df_train_balanced
 
-create_balanced_set(path = '../raw_data/')
+# create_balanced_set(path = '../raw_data/', file= 'validated.tsv')
