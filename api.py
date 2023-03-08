@@ -1,9 +1,20 @@
 from fastapi import FastAPI
 
 app = FastAPI()
-"""
-app.state.model = load_model('function that will load our model: either local, psc, or mlflow')
 
+#app.state.model = load_model('function that will load our model: either local, psc, or mlflow')
+
+
+
+@app.predict('/predict')
+def preprocess(file):
+    f
+
+
+
+
+
+"""
 @app.get('/predict')
 def predict("data"):
 
