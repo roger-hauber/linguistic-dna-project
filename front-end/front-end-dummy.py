@@ -53,28 +53,22 @@ if wav_audio_data is not None:
     # display audio data as received on the backend
     st.audio(wav_audio_data, format='audio/wav')
 
-params = {
-    "params": ""
-}
 
-#if wav_audio_data is not None:
-   # params['params'] = wav_audio_data
-
-#if file is not None:
-    #params['params'] = file
 
 api_url = 'http://127.0.0.1:8000'
 response = requests.get(api_url)
 
+dic = response.json()
+keys = list(dic.keys())
 
 if st.button('**Get results!**'):
-    dic = response.json()
-    dic['Our']
-    #col1, col2, col3, col4 = st.columns(4)
-    #col1.metric("British", "50%")
-    #col2.metric("American", "10%")
-    #col3.metric("Canadian", "30%")
-    #col4.metric("Australian", "10%")
+    #dic = response.json()
+    #dic['Our']
+    col1, col2, col3, col4 = st.columns(4)
+    col1.metric(keys[0], dic['British'])
+    col2.metric(keys[1], dic['American'])
+    col3.metric(keys[2], dic['Canadian'])
+    col4.metric(keys[3], dic['Australian'])
 
 
 
