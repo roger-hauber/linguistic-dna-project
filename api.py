@@ -3,11 +3,12 @@ from flask import request
 from fastapi import FastAPI, File, UploadFile
 from preproc import *
 import io
+import tens
 
 
 app = FastAPI()
 
-app.state.model = tf.keras.models.load_model('my_model.h5')
+app.state.model = tf.keras.models.load_model('cnn_model.h5')
 
 
 @app.post("/uploadfile")
