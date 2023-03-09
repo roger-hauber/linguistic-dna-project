@@ -220,6 +220,6 @@ def create_balanced_set(path: str,
     if save_balanced:
         save_balanced_set(df_train_balanced, path)
 
-    return df_train_balanced
+    return df_train_balanced, df_test
 
 # create_balanced_set(path = '../raw_data/', file= 'validated.tsv')
