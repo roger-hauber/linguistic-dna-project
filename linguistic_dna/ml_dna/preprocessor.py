@@ -25,8 +25,8 @@ df["length"] = filelengths
 df["num_words"] = [len(sent) for sent in df["sentence"].str.split()]
 df["num_words"].sum()/df["length"].sum()
 
-# keep only the rows with accent values
-df_mod = df[~df["accent"].isna()]
+# # keep only the rows with accent values
+# df_mod = df[~df["accent"].isna()]
 
 # load audio files and trim/pad them to the specified length
 aud_ser = [trim_pad_audio(file, cutoff=7) for file in audio_path + df_mod["path"]]
@@ -41,8 +41,8 @@ for aud in aud_ser:
 arr_mfcc = np.array(lst_mfcc)
 print('MFCC features computed')
 
-# normalize the MFCC features
-arr_mfcc_mmx = np.array((arr_mfcc-np.min(arr_mfcc))/(np.max(arr_mfcc)-np.min(arr_mfcc)))
+# # normalize the MFCC features
+# arr_mfcc_mmx = np.array((arr_mfcc-np.min(arr_mfcc))/(np.max(arr_mfcc)-np.min(arr_mfcc)))
 
 # split the data into training and test sets
 X_train = arr_mfcc_mmx[:1800, :]
