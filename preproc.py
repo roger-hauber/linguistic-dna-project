@@ -23,13 +23,13 @@ def get_norm_mfcc(aud):
     """
     Take an audio time series "aud" and get the mfcc from it and then normalize the resulting array.
     """
-    mfcc = librosa.feature.mfcc(y=aud)
+    mfcc = librosa.feature.mfcc(y=aud, n_mfcc=128)
 
     mfcc_norm = np.array((mfcc-np.min(mfcc))/(np.max(mfcc)-np.min(mfcc)))
 
     return mfcc_norm
 
-def preprocess(file, cutoff=4, sr=22050):
+def preprocess(file, cutoff=7, sr=22050):
     """
     Combine both steps: first make audio time series and trim pad and then get the mfcc and normalize.
     """
