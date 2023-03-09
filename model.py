@@ -37,7 +37,7 @@ df_mod = df[~df["accent"].isna()]
 
 # define a function to trim or pad audio files to a specified length
 def trim_pad_audio(file, cutoff=4, sr=22050):
-    aud, sr = librosa.load(file)  
+    aud, sr = librosa.load(file)
     if aud.shape[0] < cutoff*sr:
         aud = np.pad(aud, pad_width=(0, (cutoff*sr)-aud.shape[0]))
         return aud
@@ -64,8 +64,10 @@ arr_mfcc_mmx = np.array((arr_mfcc-np.min(arr_mfcc))/(np.max(arr_mfcc)-np.min(arr
 # split the data into training and test sets
 X_train = arr_mfcc_mmx[:1800, :]
 X_test = arr_mfcc_mmx[1800:, :]
-X_train = X_train.reshape((X_train.shape[0], X_train.shape[1], X_train.shape[2], 1))
-X_test = X_test.reshape((X_test.shape[0], X_test.shape[1], X_test.shape[2], 1))
+#X_train = X_train.reshape((X_train.shape[0], X_train.shape[1], X_train.shape[2], 1))
+#X_test = X_test.reshape((X_test.shape[0], X_test.shape[1], X_test.shape[2], 1))
+X_train = np.expand_dims(X_train, axis=-1)
+X_test = np.expand_dims(X_test, axis=-1)
 
 print(X_train[0][:])
 
@@ -95,7 +97,7 @@ y_test_cat = np.array(y_test_cat)
 
 # CNNmodel.compile(loss=keras.losses.categorical_crossentropy,
 #               optimizer=keras.optimizers.Adam(learning_rate=0.1),
-              
+
 #               metrics=['accuracy'])
 
 # history = CNNmodel.fit(X_train, y_train_cat, batch_size=16,  epochs=250, validation_split=0.3, shuffle=True)

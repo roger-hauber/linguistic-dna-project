@@ -3,27 +3,25 @@ from flask import request
 from fastapi import FastAPI, File, UploadFile
 from preproc import *
 import io
-import tens
+import tensorflow
+import numpy as np
 
 
 app = FastAPI()
 
-app.state.model = tf.keras.models.load_model('cnn_model.h5')
+app.state.model = tensorflow.keras.models.load_model('cnn_model.h5')
 
 
 @app.post("/uploadfile")
 async def create_upload_file(wav: bytes = File(...)):
 
     model = app.state.model
-
-
+    assert model is not None
     res_arr = preprocess(io.BytesIO(wav))
-    print(type(res_arr[0]))
-    print(res_arr.shape)
+    res_arr_pred = res_arr.reshape((1,128,302,1))
     res_lst = list(res_arr)
-    print(res_lst[0][0])
-    print(type(res_lst[0][0]))
-    #print(res_lst)
+    pred = model.predict(res_arr_pred)
+    print(pred)
     resp_dict = dict(resp=float(res_lst[0][0]))
 
 

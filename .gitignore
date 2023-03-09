@@ -2,4 +2,6 @@ raw_data/
 notebooks/
 .DS_Store
 *.ipynb
+.env
 __pycache__
+
