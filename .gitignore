@@ -3,3 +3,5 @@ notebooks/
 .DS_Store
 *.ipynb
 .env
+__pycache__
+
