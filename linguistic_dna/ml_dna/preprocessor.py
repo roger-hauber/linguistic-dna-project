@@ -87,15 +87,15 @@ def get_norm_mfcc(aud):
     return mfcc_norm
 
 
-# def preprocess(file, cutoff=4, sr=22050):
-#     """
-#     Combine both steps: first make audio time series and trim pad and then get the mfcc and normalize.
-#     """
-#     aud = trim_pad_audio(file, cutoff=cutoff, sr = sr)
+def preprocess(file, cutoff=4, sr=22050):
+     """
+     Combine both steps: first make audio time series and trim pad and then get the mfcc and normalize.
+     """
+     aud = trim_pad_audio(file, cutoff=cutoff, sr = sr)
 
-#     mfcc_norm = get_norm_mfcc(aud)
+     mfcc_norm = get_norm_mfcc(aud)
 
-#     return mfcc_norm
+     return mfcc_norm
 
 
 def get_cat_target_array(df: pd.DataFrame):
