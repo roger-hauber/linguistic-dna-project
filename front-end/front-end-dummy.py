@@ -6,6 +6,9 @@ import streamlit as st
 from io import BytesIO
 import streamlit.components.v1 as components
 import requests
+from scipy.io import wavfile
+from scipy.io.wavfile import read
+
 
 
 st.set_page_config(page_title="Linguistic DNA",
@@ -14,7 +17,15 @@ st.set_page_config(page_title="Linguistic DNA",
 
 st.title('Linguistic DNA')
 
-file = st.file_uploader('**Upload audio file**', type=['.wav', '.wave', '.flac', '.mp3', '.ogg'])
+file = st.file_uploader('**Upload audio file**', type=['wav'])
+
+if file is not None:
+    audio_bytes = file.read()
+    data = {'wav': audio_bytes}
+    #st.audio(make_audio_file(audio_bytes), format='audio/wav') --> if we want to also visualize the audio files that are being uploaded, it is a function from streamlit
+
+
+
 
 st.markdown('or **record** yourself')
 
@@ -52,23 +63,22 @@ wav_audio_data = st_audiorec()
 if wav_audio_data is not None:
     # display audio data as received on the backend
     st.audio(wav_audio_data, format='audio/wav')
-
+    #data = {'wav': wav_audio_data}
 
 
 api_url = 'http://127.0.0.1:8000'
-response = requests.get(api_url)
-
-dic = response.json()
-keys = list(dic.keys())
 
 if st.button('**Get results!**'):
-    #dic = response.json()
-    #dic['Our']
-    col1, col2, col3, col4 = st.columns(4)
-    col1.metric(keys[0], dic['British'])
-    col2.metric(keys[1], dic['American'])
-    col3.metric(keys[2], dic['Canadian'])
-    col4.metric(keys[3], dic['Australian'])
+    response = requests.post(f'{api_url}/uploadfile', files=data)
+    audio = response.json()
+    audio
+
+# For visualizing the dictionary in a matrix:
+    #col1, col2, col3, col4 = st.columns(4)
+    #col1.metric(keys[0], dic['British'])
+    #col2.metric(keys[1], dic['American'])
+    #col3.metric(keys[2], dic['Canadian'])
+    #col4.metric(keys[3], dic['Australian'])
 
 
 
