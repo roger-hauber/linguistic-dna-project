@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from flask import request
 from fastapi import FastAPI, File, UploadFile
-from preproc import *
+from ml_dna.preprocessor import *
 import io
 import tensorflow
 import numpy as np
