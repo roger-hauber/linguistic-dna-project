@@ -72,11 +72,11 @@ if st.button('**Get results!**'):
     audio
 
 # For visualizing the dictionary in a matrix:
-    #col1, col2, col3, col4 = st.columns(4)
-    #col1.metric(keys[0], dic['British'])
-    #col2.metric(keys[1], dic['American'])
-    #col3.metric(keys[2], dic['Canadian'])
-    #col4.metric(keys[3], dic['Australian'])
+    col1, col2, col3, col4 = st.columns(4)
+    col1.metric('British', round(100*audio['British']))
+    col2.metric('American', round(100*audio['American']))
+    col3.metric('Australian',round(100*audio['Australian']))
+    col4.metric('Canadian', round(100*audio['Canadian']))
 
 
 
