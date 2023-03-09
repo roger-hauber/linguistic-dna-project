@@ -161,6 +161,13 @@ tensorboard-plugin-wit==1.8.1
 tensorflow==2.11.0
 tensorflow-estimator==2.11.0
 tensorflow-io-gcs-filesystem==0.31.0
+
+# TO DO: Do we want to use that instead?
+# Trick to install the version of Tensorflow depending on your processor: darwin == Mac, ARM == M1
+# tensorflow-macos==2.10.0; sys_platform == 'darwin' and 'ARM' in platform_version # Mac M-chips
+# tensorflow==2.10.0; sys_platform == 'darwin' and 'ARM' not in platform_version # Mac Intel chips
+# tensorflow==2.10.0; sys_platform != 'darwin' # Windows & Ubuntu Intel chips
+
 termcolor==2.2.0
 terminado==0.17.1
 threadpoolctl==3.1.0
