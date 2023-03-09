@@ -54,7 +54,7 @@ df_mod["length"].mean()
 # compute MFCC features for the audio files and store them in a numpy array
 lst_mfcc = []
 for aud in aud_ser:
-    lst_mfcc.append(librosa.feature.mfcc(y=aud))
+    lst_mfcc.append(librosa.feature.mfcc(y=aud, n_mfcc=128))
 arr_mfcc = np.array(lst_mfcc)
 print('MFCC features computed')
 
@@ -78,26 +78,57 @@ y_train_cat = np.array(y_train_cat)
 y_test_cat = np.array(y_test_cat)
 
 # define a base model for a convolutional neural network
-input_shape=(20,302,1)
+# input_shape=(20,302,1)
+# CNNmodel = Sequential()
+# CNNmodel.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=input_shape))
+# CNNmodel.add(layers.MaxPooling2D((2, 2)))
+# CNNmodel.add(layers.Dropout(0.2))
+# CNNmodel.add(layers.Conv2D(64, (3, 3), activation='relu'))
+# CNNmodel.add(layers.MaxPooling2D((2, 2)))
+# CNNmodel.add(layers.Dropout(0.2))
+# CNNmodel.add(layers.Conv2D(64, (3, 3), activation='relu'))
+# CNNmodel.add(layers.Flatten())
+# CNNmodel.add(layers.Dense(64, activation='relu'))
+# CNNmodel.add(layers.Dropout(0.2))
+# CNNmodel.add(layers.Dense(32, activation='relu'))
+# CNNmodel.add(layers.Dense(5, activation='softmax'))
+
+# CNNmodel.compile(loss=keras.losses.categorical_crossentropy,
+#               optimizer=keras.optimizers.Adam(learning_rate=0.1),
+              
+#               metrics=['accuracy'])
+
+# history = CNNmodel.fit(X_train, y_train_cat, batch_size=16,  epochs=250, validation_split=0.3, shuffle=True)
+
+#Model Victor
+#def initialize_CNNmodel_1(X, y):
+
+'''
+First CNN Architecture, simple to avoid overfitting.
+We should add up complication step-by-step.
+'''
+# For this dummy we have taken into account the mfccs size for height and width parameters
+input_shape=(128,302,1)
 CNNmodel = Sequential()
-CNNmodel.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=input_shape))
-CNNmodel.add(layers.MaxPooling2D((2, 2)))
-CNNmodel.add(layers.Dropout(0.2))
-CNNmodel.add(layers.Conv2D(64, (3, 3), activation='relu'))
-CNNmodel.add(layers.MaxPooling2D((2, 2)))
-CNNmodel.add(layers.Dropout(0.2))
-CNNmodel.add(layers.Conv2D(64, (3, 3), activation='relu'))
+CNNmodel.add(layers.Conv2D(32, kernel_size=(11, 11), activation='relu', input_shape=input_shape))
+CNNmodel.add(layers.MaxPooling2D(pool_size=(4, 4)))
+CNNmodel.add(layers.Conv2D(16, kernel_size=(7, 7), activation='relu'))
+CNNmodel.add(layers.MaxPooling2D(pool_size=(2, 2)))
+CNNmodel.add(layers.Conv2D(8, kernel_size=(3, 3), activation='relu'))
+CNNmodel.add(layers.MaxPooling2D(pool_size=(2, 2)))
+CNNmodel.add(layers.Conv2D(4, kernel_size=(3, 3), activation='relu'))
+CNNmodel.add(layers.MaxPooling2D(pool_size=(2, 2)))
 CNNmodel.add(layers.Flatten())
-CNNmodel.add(layers.Dense(64, activation='relu'))
-CNNmodel.add(layers.Dropout(0.2))
 CNNmodel.add(layers.Dense(32, activation='relu'))
+CNNmodel.add(layers.Dropout(rate=0.2))
+CNNmodel.add(layers.Dense(16, activation='relu'))
 CNNmodel.add(layers.Dense(5, activation='softmax'))
 
 CNNmodel.compile(loss=keras.losses.categorical_crossentropy,
-              optimizer=keras.optimizers.Adadelta(),
-              metrics=['accuracy'])
+              optimizer=keras.optimizers.Adam(learning_rate=0.1),
+                             metrics=['accuracy'])
 
-history = CNNmodel.fit(X_train, y_train_cat, batch_size=64,  epochs=20, validation_split=0.2)
+history = CNNmodel.fit(X_train, y_train_cat, batch_size=16,  epochs=50, validation_split=0.3, shuffle=True)
 
 # evaluate model on test set                )
 metrics = CNNmodel.evaluate(
@@ -163,3 +194,5 @@ plt.legend(['train', 'val'], loc='upper left')
 plt.show()
 
 print('figure plotted')
+
+CNNmodel.save("cnn_model.h5")
