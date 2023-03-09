@@ -1,8 +1,3 @@
-'''
-To do:
-- include train/test split and infer maximum n_female and n_male from df_train
-'''
-
 import pandas as pd
 import numpy as np
 
@@ -105,15 +100,36 @@ def get_demographs_per_accent(df_presampled: pd.DataFrame) -> pd.DataFrame:
     return df_demographs_per_accent
 
 
+def get_min_num_persons(df_presampled: pd.DataFrame) -> int:
+    temp = df_presampled[(df_presampled['gender'] == 'male') | (df_presampled['gender'] == 'female')] # exclude gender == 'other'
+
+    df_demographs_per_accent = get_demographs_per_accent(temp)
+
+    min_gender = df_demographs_per_accent[df_demographs_per_accent['num_persons']
+                                          == df_demographs_per_accent['num_persons'].
+                                          min()].reset_index().iloc[0, 1]
+    min_num_persons = df_demographs_per_accent[df_demographs_per_accent['num_persons']
+                                               == df_demographs_per_accent['num_persons'].
+                                               min()].reset_index().iloc[0, 2]
+
+    print(f'Gender of smallest sample in set: {min_gender}')
+
+    if min_gender == 'female':
+        n_female = min_num_persons
+        return n_female
+    return None
+
+
 def get_target_ids(df_presampled: pd.DataFrame,
-                   n_female: str,
-                   n_male: str,
+                   n_female: int,
+                   n_gender_ratio: int = 1,
                    target_accents: list = ['us', 'canada', 'australia', 'england', 'indian']) -> list:
     '''
     Creates table with n_female and n_male samples per accent,
     returns a list of client_ids of these samples
     '''
     gender = ['female', 'male']
+    n_male = n_female * n_gender_ratio
     n = {'female': n_female, 'male': n_male}
     i = 0
 
@@ -134,7 +150,9 @@ def get_target_ids(df_presampled: pd.DataFrame,
     return target_ids
 
 
-def get_balanced_data(df_presampled: pd.DataFrame, target_ids: list) -> pd.DataFrame:
+def get_balanced_data(df_presampled: pd.DataFrame,
+                      target_ids: list,
+                      max_num_samples: int = 5) -> pd.DataFrame:
     '''
     Creates balanced table from target_ids,
     returns dataframe
@@ -144,10 +162,10 @@ def get_balanced_data(df_presampled: pd.DataFrame, target_ids: list) -> pd.DataF
     for id in target_ids:
         # extracting samples
         count = df_presampled[df_presampled['client_id']== id].count()['client_id'] # counting number of samples per client_id
-        if count < 5:
+        if count < max_num_samples:
             temp = df_presampled[df_presampled['client_id'] == id].sample(n=count) # taking these samples if less than 5
         else:
-            temp = df_presampled[df_presampled['client_id'] == id].sample(n=5) # taking a 5 random samples if more than 5 samples per client_id
+            temp = df_presampled[df_presampled['client_id'] == id].sample(n=max_num_samples) # taking a x random samples if more than x samples per client_id
 
         # appending dataframe
         if i == 0:
@@ -173,8 +191,8 @@ def create_balanced_set(path: str,
                         target_ages: list = ['twenties', 'thirties', 'fourties'],
                         min_num_words: int = 9,
                         max_num_samples: int = 5,
-                        n_male: int = 67,
                         n_female: int = 67,
+                        n_gender_ratio: int = 1,
                         test_size: float = 0.3,
                         save_test: bool = False,
                         save_balanced: bool = False):
@@ -184,19 +202,21 @@ def create_balanced_set(path: str,
     # delete rows with missings, non-used accents, word count smaller 9, non-used age groups
     df_sampled = clear_dataframe(df, target_accents, target_ages, min_num_words)
 
-     # split into train and test set, save test set if save_test=True (not the default)
-    # df_train, df_test = train_test_split(df_sampled, test_size=0.3, random_state=0)
-    # print('data splitted into train and test set')
-    # if save_test:
-    #     df_test.to_csv(f'{path}test_set.csv', index=False)
+    # split into train and test set, save test set if save_test=True (not the default)
+    df_train, df_test = train_test_split(df_sampled, test_size=0.3, random_state=0)
+    print('data splitted into train and test set')
+    if save_test:
+        df_test.to_csv(f'{path}test_set.csv', index=False)
 
-    df_downsampled = downsampling_per_person(df_sampled, max_num_samples)
+    # get smallest sample of genderxaccent
+    df_demographics_per_accent = get_demographs_per_accent(df_train)
+    n_female = get_min_num_persons(df_demographics_per_accent)
 
     # get client_ids that will be included in balanced data set
-    target_ids = get_target_ids(df_sampled, n_male, n_female)
+    target_ids = get_target_ids(df_train, n_female, n_gender_ratio)
 
     # create balanced data set, save if save_balanced=True (not the default)
-    df_train_balanced = get_balanced_data(df_sampled, target_ids)
+    df_train_balanced = get_balanced_data(df_train, target_ids)
     if save_balanced:
         save_balanced_set(df_train_balanced, path)
 
