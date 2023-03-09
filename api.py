@@ -3,14 +3,20 @@ from flask import request
 from fastapi import FastAPI, File, UploadFile
 from preproc import *
 import io
+import tens
+
 
 app = FastAPI()
 
-#app.state.model = load_model('function that will load our model: either local, psc, or mlflow')
+app.state.model = tf.keras.models.load_model('cnn_model.h5')
 
 
 @app.post("/uploadfile")
 async def create_upload_file(wav: bytes = File(...)):
+
+    model = app.state.model
+
+
     res_arr = preprocess(io.BytesIO(wav))
     print(type(res_arr[0]))
     print(res_arr.shape)
@@ -18,8 +24,9 @@ async def create_upload_file(wav: bytes = File(...)):
     print(res_lst[0][0])
     print(type(res_lst[0][0]))
     #print(res_lst)
-
     resp_dict = dict(resp=float(res_lst[0][0]))
+
+
     return resp_dict
 
 

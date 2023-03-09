@@ -35,6 +35,6 @@ def preprocess(file, cutoff=4, sr=22050):
     """
     aud = trim_pad_audio(file, cutoff=cutoff, sr = sr)
 
-    mfcc_norm = get_norm_mfcc(y= aud)
+    mfcc_norm = get_norm_mfcc(aud)
 
     return mfcc_norm
