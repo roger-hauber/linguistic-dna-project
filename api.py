@@ -1,15 +1,26 @@
 from fastapi import FastAPI
+from flask import request
+from fastapi import FastAPI, File, UploadFile
+from preproc import *
+import io
 
 app = FastAPI()
 
 #app.state.model = load_model('function that will load our model: either local, psc, or mlflow')
 
 
+@app.post("/uploadfile")
+async def create_upload_file(wav: bytes = File(...)):
+    res_arr = preprocess(io.BytesIO(wav))
+    print(type(res_arr[0]))
+    print(res_arr.shape)
+    res_lst = list(res_arr)
+    print(res_lst[0][0])
+    print(type(res_lst[0][0]))
+    #print(res_lst)
 
-@app.predict('/predict')
-def preprocess(file):
-    f
-
+    resp_dict = dict(resp=float(res_lst[0][0]))
+    return resp_dict
 
 
 
@@ -30,9 +41,15 @@ def predict("data"):
     X_processed_audio = preprocess_features(X_pred)
     y_pred = model.predict(X_processed_audio)
 
+    hard_code your dictionary function:
+
+
     return {'format':'as we like'}
 """
 
 @app.get('/')
 def root():
-    return {"Our":"API"}
+    return {"British":"50%",
+            "American": "20%",
+            "Australian": "10%",
+            "Canadian": "20%"}
