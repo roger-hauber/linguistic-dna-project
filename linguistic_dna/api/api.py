@@ -14,12 +14,13 @@ app.state.model = tensorflow.keras.models.load_model('cnn_model.h5')
 
 #the fucntion for the hardcoded Dictionary, maybe we can put it somewhere else
 
-def create_dict(val1, val2, val3, val4):
+def create_dict(val1, val2, val3, val4, val5):
     my_dict = {
-        "British": val1,
-        "American": val2,
-        "Australian": val3,
-        "Canadian": val4
+        "Australian": val1,
+        "Canadian": val2,
+        "England": val3,
+        "Indian": val4,
+        "US": val5
         }
     return my_dict
 
@@ -33,13 +34,11 @@ async def create_upload_file(wav: bytes = File(...)):
     res_arr_pred = res_arr.reshape((1,128,302,1))
     res_lst = list(res_arr)
     pred = model.predict(res_arr_pred)
+    dic = create_dict(pred[0][0],pred[0][1],pred[0][2],pred[0][3], pred[0][4])
 
     print(pred)
-    resp_dict = dict(resp=float(res_lst[0][0],res_lst[0][1],res_lst[0][2],res_lst[0][3]))
-
-
-
-    return resp_dict
+    resp_dict = dict(resp=float(res_lst[0][0]))
+    return dic
 
 
 
