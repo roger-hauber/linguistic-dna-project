@@ -98,10 +98,11 @@ def preprocess(file, cutoff=4, sr=22050):
      return mfcc_norm
 
 
-def get_cat_target_array(df: pd.DataFrame):
+def get_cat_target_array(df: pd.DataFrame) -> np.array:
     '''
-    Creates
+    Creates dummy coded target variable (accents)
     '''
     y = df["accent"]
     y_cat = pd.get_dummies(y)
     y_cat = np.array(y_cat)
+    return y_cat
