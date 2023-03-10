@@ -9,8 +9,8 @@ def set_paths(file_name: str, folder_name: str) -> tuple[str, str]:
     '''
     Set file paths for CSV file and audio files
     '''
-    csv_path=f'../../raw_data/{file_name}'
-    audio_path=f'../../raw_data/{folder_name}'
+    csv_path=f'raw_data/{file_name}'
+    audio_path=f'raw_data/{folder_name}'
     return csv_path, audio_path
 
 ## TO BE CHANGED
@@ -31,7 +31,7 @@ def shuffle_rows(df: pd.DataFrame, frac=1) -> pd.DataFrame:
     '''
     Shuffle the rows of the DataFrame
     '''
-    df = df.sample(frac).reset_index(drop=True)
+    df = df.sample(frac=frac).reset_index(drop=True)
     return df
 
 
@@ -48,9 +48,6 @@ def add_filelength(audio_path, df: pd.DataFrame) -> pd.DataFrame:
 # # load audio files and trim/pad them to the specified length
 # aud_ser = [trim_pad_audio(file, cutoff=7) for file in audio_path + df_mod["path"]]
 
-# # compute the average length of audio files in the DataFrame
-# # df_mod["length"].mean()
-
 # # compute MFCC features for the audio files and store them in a numpy array
 # lst_mfcc = []
 # for aud in aud_ser:
@@ -62,7 +59,7 @@ def add_filelength(audio_path, df: pd.DataFrame) -> pd.DataFrame:
 # arr_mfcc_mmx = np.array((arr_mfcc-np.min(arr_mfcc))/(np.max(arr_mfcc)-np.min(arr_mfcc)))
 
 
-def trim_pad_audio(file, cutoff=4, sr=22050):
+def trim_pad_audio(file, cutoff=4, sr=22050, drop_first_sec = False):
     """
     Takes an audio file and gets the audio time series from it, trimming or padding
     it to a specified length in seconds (== cutoff)
@@ -72,10 +69,14 @@ def trim_pad_audio(file, cutoff=4, sr=22050):
     if aud.shape[0] < cutoff*sr:
         #print("short file pre: ", aud.shape)
         aud = np.pad(aud, pad_width=(0, (cutoff*sr)-aud.shape[0]))
+        if drop_first_sec == True:
+            aud = aud[sr+1:]
         #print("short file post: ",aud.shape)
         return aud
     #print("long file pre: ",aud.shape)
     aud = aud[:cutoff*sr,]
+    if drop_first_sec == True:
+            aud = aud[sr+1:]
     #print("long file post: ", aud.shape)
     return aud
 
