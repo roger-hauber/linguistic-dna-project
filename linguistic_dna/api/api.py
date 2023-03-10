@@ -35,7 +35,7 @@ async def create_upload_file(wav: bytes = File(...)):
     res_lst = list(res_arr)
     pred = model.predict(res_arr_pred)
     dic = create_dict(float(pred[0][0]),float(pred[0][1]),float(pred[0][2]),float(pred[0][3]), float(pred[0][4]))
-
+    print(pred.shape)
     print(pred)
     resp_dict = dict(resp=float(res_lst[0][0]))
     return dic
