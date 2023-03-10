@@ -5,16 +5,20 @@ import matplotlib.pyplot as plt
 import os
 
 ## TO BE CHANGED
-# set file paths for CSV file and audio files
-csv_path='/Users/frido/linguistic-dna-project/raw_data/balanced.csv'
-audio_path='/Users/frido/linguistic-dna-project/raw_data/target_clips/'
+def set_paths(file_name: str, folder_name: str) -> tuple[str, str]:
+    '''
+    Set file paths for CSV file and audio files
+    '''
+    csv_path=f'../../raw_data/{file_name}'
+    audio_path=f'../../raw_data/{folder_name}'
+    return csv_path, audio_path
 
 ## TO BE CHANGED
 # load data from CSV file into a pandas DataFrame
-df = pd.read_csv(csv_path)
+# df = pd.read_csv(csv_path)
 
 
-def remove_missing_audios(audio_path, df: pd.DataFrame) -> df:
+def remove_missing_audios(df: pd.DataFrame, audio_path) -> pd.DataFrame:
     '''
     Deletes rows in DataFrame that do not have corresponding audio files
     '''
@@ -40,22 +44,22 @@ def add_filelength(audio_path, df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-## TO BE CHANGED
-# load audio files and trim/pad them to the specified length
-aud_ser = [trim_pad_audio(file, cutoff=7) for file in audio_path + df_mod["path"]]
+# ## TO BE CHANGED
+# # load audio files and trim/pad them to the specified length
+# aud_ser = [trim_pad_audio(file, cutoff=7) for file in audio_path + df_mod["path"]]
 
-# compute the average length of audio files in the DataFrame
-# df_mod["length"].mean()
+# # compute the average length of audio files in the DataFrame
+# # df_mod["length"].mean()
 
-# compute MFCC features for the audio files and store them in a numpy array
-lst_mfcc = []
-for aud in aud_ser:
-    lst_mfcc.append(librosa.feature.mfcc(y=aud))
-arr_mfcc = np.array(lst_mfcc)
-print('MFCC features computed')
+# # compute MFCC features for the audio files and store them in a numpy array
+# lst_mfcc = []
+# for aud in aud_ser:
+#     lst_mfcc.append(librosa.feature.mfcc(y=aud))
+# arr_mfcc = np.array(lst_mfcc)
+# print('MFCC features computed')
 
-# normalize the MFCC features
-arr_mfcc_mmx = np.array((arr_mfcc-np.min(arr_mfcc))/(np.max(arr_mfcc)-np.min(arr_mfcc)))
+# # normalize the MFCC features
+# arr_mfcc_mmx = np.array((arr_mfcc-np.min(arr_mfcc))/(np.max(arr_mfcc)-np.min(arr_mfcc)))
 
 
 def trim_pad_audio(file, cutoff=4, sr=22050):
