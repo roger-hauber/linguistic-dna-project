@@ -9,7 +9,7 @@ import numpy as np
 
 app = FastAPI()
 
-app.state.model = tensorflow.keras.models.load_model('cnn_model.h5')
+app.state.model = tensorflow.keras.models.load_model('/home/roger/code/roger-hauber/linguistic-dna-project/cnn_model.h5')
 
 
 #the fucntion for the hardcoded Dictionary, maybe we can put it somewhere else
@@ -30,7 +30,8 @@ async def create_upload_file(wav: bytes = File(...)):
 
     model = app.state.model
     assert model is not None
-    res_arr = preprocess(io.BytesIO(wav))
+    res_arr = preprocess(io.BytesIO(wav), cutoff=7)
+    print(res_arr.shape)
     res_arr_pred = res_arr.reshape((1,128,302,1))
     res_lst = list(res_arr)
     pred = model.predict(res_arr_pred)
