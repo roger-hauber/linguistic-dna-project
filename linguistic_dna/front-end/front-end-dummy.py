@@ -64,7 +64,7 @@ if wav_audio_data is not None:
     #data = {'wav': wav_audio_data}
 
 
-api_url = 'https://dna-api-roger-hauberr-5yrpl53y3a-ew.a.run.app'
+api_url = 'https://dna-api-marie-hartmann-6as2cgqtrq-ew.a.run.app'
 
 if st.button('**Get results!**'):
     response = requests.post(f'{api_url}/uploadfile', files=data)
