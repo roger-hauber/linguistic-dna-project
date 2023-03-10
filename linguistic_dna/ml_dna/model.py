@@ -8,7 +8,7 @@ from keras import Model, layers, Sequential, regularizers
 from keras.layers import Conv2D, MaxPooling2D, Dense, Dropout, Activation, Flatten
 from keras.callbacks import EarlyStopping
 
-from preprocessor import *
+from linguistic_dna.ml_dna.preprocessor import *
 
 
 def initialize_model(input_shape: tuple = (20,302,1)) -> Model:
