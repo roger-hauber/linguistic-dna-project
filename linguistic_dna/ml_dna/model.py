@@ -50,10 +50,11 @@ def train_model(CNNmodel: Model,
                 X: np.ndarray,
                 y: np.ndarray,
                 batch_size=64,
-                epochs=20,
-                patience=2,
+                epochs=100,
+                patience=10,
                 validation_data=None, # overrides validation_split
-                validation_split=0.2) -> tuple[Model, dict]:
+                validation_split=0.2,
+                verbose=0) -> tuple[Model, dict]:
     """
     Fit model and return a the tuple (fitted_model, history)
     """
@@ -69,7 +70,7 @@ def train_model(CNNmodel: Model,
                         epochs=100,
                         batch_size=batch_size,
                         callbacks=[es],
-                        verbose=0)
+                        verbose=verbose)
 
     print(f"✅ model trained")
     return CNNmodel, history
