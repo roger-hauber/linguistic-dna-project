@@ -69,16 +69,16 @@ api_url = 'https://dna-api-marie-hartmann-6as2cgqtrq-ew.a.run.app'
 if st.button('**Get results!**'):
     response = requests.post(f'{api_url}/uploadfile', files=data)
     audio = response.json()
-    #audio
+
 
 # For visualizing the dictionary in a matrix:
 
     col1, col2, col3, col4, col5 = st.columns(5)
-    col1.metric('Australian', str(round(100*audio['Australian'])) + '%')
-    col2.metric('Canadian', str(round(100*audio['Canadian'])) + '%')
-    col3.metric('British', str(round(100*audio['England'])) + '%')
-    col4.metric('Indian', str(round(100*audio['Indian'])) + '%')
-    col5.metric('American', str(round(100*audio['US'])) + '%')
+    col1.metric('Australian', round(100*audio['Australian']))
+    col2.metric('Canadian', round(100*audio['Canadian']))
+    col3.metric('British', round(100*audio['England']))
+    col4.metric('Indian', round(100*audio['Indian']))
+    col5.metric('American', round(100*audio['US']))
 
 
 
