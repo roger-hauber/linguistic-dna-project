@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from flask import request
+
 from fastapi import FastAPI, File, UploadFile
 from ml_dna.preprocessor import *
 import io
@@ -9,7 +9,7 @@ import numpy as np
 
 app = FastAPI()
 
-app.state.model = tensorflow.keras.models.load_model('/home/roger/code/roger-hauber/linguistic-dna-project/cnn_model.h5')
+app.state.model = tensorflow.keras.models.load_model('cnn_model.h5')
 
 
 #the fucntion for the hardcoded Dictionary, maybe we can put it somewhere else
@@ -34,11 +34,13 @@ async def create_upload_file(wav: bytes = File(...)):
     print(res_arr.shape)
     res_arr_pred = res_arr.reshape((1,128,302,1))
     res_lst = list(res_arr)
+
     pred = model.predict(res_arr_pred)
-    dic = create_dict(float(pred[0][0]),float(pred[0][1]),float(pred[0][2]),float(pred[0][3]), float(pred[0][4]))
-    print(pred.shape)
-    print(pred)
-    resp_dict = dict(resp=float(res_lst[0][0]))
+    pred_list = list(pred)
+    dic = create_dict(float(pred_list[0][0]),float(pred_list[0][1]),float(pred_list[0][2]),float(pred_list[0][3]), float(pred_list[0][4]))
+    print(type(dic))
+    print(dic)
+    #resp_dict = dict(resp=float(res_lst[0][0]))
     return dic
 
 
