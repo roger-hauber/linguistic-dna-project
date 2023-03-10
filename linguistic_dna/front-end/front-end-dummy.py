@@ -64,7 +64,7 @@ if wav_audio_data is not None:
     #data = {'wav': wav_audio_data}
 
 
-api_url = 'https://dna-api-roger-hauberr-5yrpl53y3a-ew.a.run.app'
+api_url = 'https://dna-api-roger-hauberr-new-5yrpl53y3a-ew.a.run.app'
 #api_url= "http://127.0.0.1:8080"
 
 if st.button('**Get results!**'):
