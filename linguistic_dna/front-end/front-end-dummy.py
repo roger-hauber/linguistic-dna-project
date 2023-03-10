@@ -62,9 +62,9 @@ if wav_audio_data is not None:
     data = {'wav': wav_audio_data}
 
 
-if wav_audio_data is not None:
+#if wav_audio_data is not None:
     # display audio data as received on the backend
-    st.audio(wav_audio_data, format='audio/wav')
+    #st.audio(wav_audio_data, format='audio/wav')
     #data = {'wav': wav_audio_data}
 
 
