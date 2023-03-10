@@ -51,7 +51,7 @@ def add_filelength(audio_path, df: pd.DataFrame) -> pd.DataFrame:
 # # compute MFCC features for the audio files and store them in a numpy array
 # lst_mfcc = []
 # for aud in aud_ser:
-#     lst_mfcc.append(librosa.feature.mfcc(y=aud))
+#     lst_mfcc.append(librosa.feature.mfcc(y=aud, n_mfcc=128))
 # arr_mfcc = np.array(lst_mfcc)
 # print('MFCC features computed')
 
