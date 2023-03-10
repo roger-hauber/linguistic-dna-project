@@ -66,10 +66,11 @@ if wav_audio_data is not None:
 
 api_url = 'https://dna-api-roger-hauberr-5yrpl53y3a-ew.a.run.app'
 #api_url= "http://127.0.0.1:8080"
+
 if st.button('**Get results!**'):
     response = requests.post(f'{api_url}/uploadfile', files=data)
     audio = response.json()
-    #audio
+
 
 # For visualizing the dictionary in a matrix:
 
