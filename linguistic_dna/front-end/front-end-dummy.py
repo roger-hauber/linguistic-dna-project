@@ -78,7 +78,12 @@ if st.button('**Get results!**'):
     # display the metrics in the sorted order horizontally
     cols = st.beta_columns(len(sorted_audio))
     for i, (country, value) in enumerate(sorted_audio.items()):
-        cols[i].metric(label=country, value=str(round(100*value))+'%')
+        cols[i].metric(label=country, value=str(round(100*value))+'%',
+                    delta_color='auto',
+                    label_font_size='24px',
+                    value_font_size='24px',
+                    label_font_weight='bold',
+                    value_font_weight='bold')
 
 
 # For visualizing the dictionary in a matrix:
