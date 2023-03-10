@@ -1,5 +1,9 @@
 FROM python:3.10.6-buster
 
+RUN apt-get update -y && apt-get install -y --no-install-recommends build-essential gcc \
+    libsndfile1
+
+
 
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt

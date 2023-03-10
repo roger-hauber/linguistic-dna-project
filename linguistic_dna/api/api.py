@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from flask import request
+
 from fastapi import FastAPI, File, UploadFile
 from ml_dna.preprocessor import *
 import io
@@ -9,7 +9,7 @@ import numpy as np
 
 app = FastAPI()
 
-app.state.model = tensorflow.keras.models.load_model('/home/roger/code/roger-hauber/linguistic-dna-project/cnn_model.h5')
+app.state.model = tensorflow.keras.models.load_model('cnn_model.h5')
 
 
 #the fucntion for the hardcoded Dictionary, maybe we can put it somewhere else
