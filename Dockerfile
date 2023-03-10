@@ -5,7 +5,7 @@ COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
 COPY linguistic_dna/api/api.py api.py
-COPY linguistic_dna/ml_dna/preprocessor.py ml_dna.preprocessor.py
+COPY linguistic_dna/ml_dna/preprocessor.py ml_dna/preprocessor.py
 COPY cnn_model.h5 cnn_model.h5
 
 
