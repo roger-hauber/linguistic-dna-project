@@ -74,11 +74,12 @@ if st.button('**Get results!**'):
 
 
 # sort the dictionary by values in descending order
-sorted_audio = dict(sorted(audio.items(), key=lambda item: item[1], reverse=True))
+    sorted_audio = dict(sorted(audio.items(), key=lambda item: item[1], reverse=True))
 
-# display the metrics in the sorted order
-for country, value in sorted_audio.items():
-    st.metric(label=country, value=str(round(100*value))+'%')
+    # display the metrics in the sorted order
+    row = st.row()
+    for country, value in sorted_audio.items():
+        row.metric(label=country, value=str(round(100*value))+'%')
 
 
 # For visualizing the dictionary in a matrix:
