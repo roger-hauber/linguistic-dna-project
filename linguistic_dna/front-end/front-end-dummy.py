@@ -69,7 +69,7 @@ api_url = 'https://dna-api-roger-hauberr-5yrpl53y3a-ew.a.run.app'
 if st.button('**Get results!**'):
     response = requests.post(f'{api_url}/uploadfile', files=data)
     audio = response.json()
-    audio
+    #audio
 
 # For visualizing the dictionary in a matrix:
 
@@ -78,7 +78,7 @@ if st.button('**Get results!**'):
     col2.metric('Canadian', str(round(100*audio['Canadian'])) + '%')
     col3.metric('British', str(round(100*audio['England'])) + '%')
     col4.metric('Indian', str(round(100*audio['Indian'])) + '%')
-    col5.metric('American', str(round(100*audio['Us'])) + '%')
+    col5.metric('American', str(round(100*audio['US'])) + '%')
 
 
 
