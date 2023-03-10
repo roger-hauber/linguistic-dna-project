@@ -57,6 +57,10 @@ def st_audiorec():
 
 wav_audio_data = st_audiorec()
 
+if wav_audio_data is not None:
+    #audio_bytes = wav_audio_data.read()
+    data = {'wav': wav_audio_data}
+
 
 if wav_audio_data is not None:
     # display audio data as received on the backend
@@ -71,20 +75,13 @@ if st.button('**Get results!**'):
     response = requests.post(f'{api_url}/uploadfile', files=data)
     audio = response.json()
 
-
-
+    # sort the dictionary by values in descending order
     sorted_audio = dict(sorted(audio.items(), key=lambda item: item[1], reverse=True))
 
     # display the metrics in the sorted order horizontally
-    cols = st.beta_columns(len(sorted_audio))
+    cols = st.columns(len(sorted_audio))
     for i, (country, value) in enumerate(sorted_audio.items()):
-        cols[i].metric(label=country, value=str(round(100*value))+'%',
-                    delta_color='auto',
-                    label_font_size='24px',
-                    value_font_size='24px',
-                    label_font_weight='bold',
-                    value_font_weight='bold')
-
+        cols[i].metric(label=country, value=str(round(100*value))+'%')
 
 # For visualizing the dictionary in a matrix:
 
