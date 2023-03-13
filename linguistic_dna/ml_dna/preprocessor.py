@@ -81,6 +81,23 @@ def trim_pad_audio(file, cutoff=4, sr=22050, drop_first_sec = False):
     return aud
 
 
+def mfcc_get_minmax(arr: np.array) -> tuple[float, float]:
+    """
+    Takes an mfcc array "arr" and calculated its min and max
+    """
+    arr_min = np.amin(arr)
+    arr_max = np.amax(arr)
+    return arr_min, arr_max
+
+
+def normalizer(arr: np.array, arr_min: float, arr_max: float) -> np.array:
+    """
+    Takes an mfcc array "arr" and its precalculated min and max and normalizes it
+    """
+    arr_norm = np.array((arr-arr_min)/(arr_max-arr_min))
+    return arr_norm
+
+
 def get_norm_mfcc(aud):
     """
     Take an audio time series "aud" and get the mfcc from it and then normalize the resulting array.

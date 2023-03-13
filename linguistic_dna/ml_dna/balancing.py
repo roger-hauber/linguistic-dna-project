@@ -4,11 +4,11 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 
 
-def load_data(path: str, file: str) -> pd.DataFrame:
+def load_data(path: str, file: str, sep: str =",") -> pd.DataFrame:
     '''
     Loads data set into a dataframe
     '''
-    df = pd.read_csv(f"{path}{file}", sep="\t", header=0)
+    df = pd.read_csv(f"{path}{file}", sep=sep, header=0)
     print('Data loaded')
     return df
 
