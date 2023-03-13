@@ -9,7 +9,7 @@ def load_data(path: str, file: str, sep: str =",") -> pd.DataFrame:
     Loads data set into a dataframe
     '''
     df = pd.read_csv(f"{path}{file}", sep=sep, header=0)
-    print('Data loaded')
+    print('✅ Data loaded')
     return df
 
 
@@ -59,7 +59,7 @@ def clear_dataframe(df: pd.DataFrame,
     df = select_by_age_groups(df, target_ages)
     df_presampled = select_by_num_words(df, min_num_words)
 
-    print('Dataframe ready to be splitted & balanced')
+    print('✅ Dataframe cleaned, ready to be splitted & balanced')
     return df_presampled
 
 def downsampling_per_person(df_presampled: pd.DataFrame, max_num_samples: int = 5) -> pd.DataFrame:
@@ -112,7 +112,7 @@ def get_min_num_persons(df_presampled: pd.DataFrame) -> int:
                                                == df_demographs_per_accent['num_persons'].
                                                min()].reset_index().iloc[0, 2]
 
-    print(f'Gender of smallest sample in set: {min_gender}')
+    print(f'✅ Gender of smallest sample in set: {min_gender}')
 
     if min_gender == 'female':
         n_female = min_num_persons
@@ -146,7 +146,7 @@ def get_target_ids(df_presampled: pd.DataFrame,
 
     target_ids = data['client_id']
 
-    print('Target ids created')
+    print('✅ Target ids created')
     return target_ids
 
 
@@ -174,7 +174,7 @@ def get_balanced_data(df_presampled: pd.DataFrame,
             df_balanced = pd.concat([df_balanced, temp], axis=0)
         i += 1
 
-    print('Balanced data set created')
+    print('✅ Balanced data set created')
     return df_balanced
 
 
@@ -204,7 +204,7 @@ def create_balanced_set(path: str,
 
     # split into train and test set, save test set if save_test=True (not the default)
     df_train, df_test = train_test_split(df_sampled, test_size=0.3, random_state=0)
-    print('data splitted into train and test set')
+    print('✅ data splitted into train and test set')
     if save_test:
         df_test.to_csv(f'{path}test_set.csv', index=False)
 
