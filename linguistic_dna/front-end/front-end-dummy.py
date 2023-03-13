@@ -8,18 +8,20 @@ from scipy.io import wavfile
 from scipy.io.wavfile import read
 import time
 import random
-
-
+import plotly.graph_objects as go
 
 
 
 st.set_page_config(page_title="Linguistic DNA",
                    page_icon="💬")
 
+st.sidebar.success("Find your accent 📉")
 
-st.title('Linguistic DNA')
+#st.title(':light-blue-70[Linguistic DNA]:dna:')
+st.title('Linguistic DNA 🧬')
 
-file = st.file_uploader('**Upload audio file**', type=['wav'])
+
+file = st.file_uploader(':blue[**Upload audio file**]', type=['wav'])
 
 if file is not None:
     audio_bytes = file.read()
@@ -28,8 +30,8 @@ if file is not None:
 
 
 
+st.markdown(':blue[or **record** yourself]')
 
-st.markdown('or **record** yourself')
 
 def st_audiorec():
 
@@ -62,25 +64,61 @@ def st_audiorec():
 wav_audio_data = st_audiorec()
 
 if wav_audio_data is not None:
-    #audio_bytes = wav_audio_data.read()
     data = {'wav': wav_audio_data}
 
 
-#if wav_audio_data is not None:
-    # display audio data as received on the backend
-    #st.audio(wav_audio_data, format='audio/wav')
-    #data = {'wav': wav_audio_data}
-
 
 api_url = 'https://dna-api-roger-hauberr-new-5yrpl53y3a-ew.a.run.app'
-#api_url= "http://127.0.0.1:8080"
+
 
 if st.button('**Get results!**'):
+    response = requests.post(f'{api_url}/uploadfile', files=data)
+    audio = response.json()
+
+# Add a timer before displaying the plot
+    #st.write('Wait for your results ⏳')
+    #time.sleep(4)
+
+    # Display a balloons message before showing the plot
+    #st.balloons()
 
     # sort the dictionary by values in descending order
     sorted_audio = dict(sorted(audio.items(), key=lambda item: item[1], reverse=True))
 
+
+    country = list(sorted_audio.keys())
+    accents = list(sorted_audio.values())
+
+    total_count = sum(accents)
+    percentages = [round((accent / total_count) * 100) for accent in accents]
+
+
+    # Create a bar chart using Plotly
+    fig = go.Figure(go.Bar(
+        x=country ,
+        y=[accent * 100 for accent in accents],
+        marker_color=['#1f77b4' if i==0 else 'indianred' for i in range(len(country))],  # Highlight first bar with red color
+        text=percentages,  # Add percentages as text on top of bars
+        textposition='auto',  # Automatically position text on top of bars
+        texttemplate='%{text}%',
+        textfont_size=21,  # Set font size of text to 16# Display text as percentage
+    ))
+    fig.update_layout(
+        xaxis_tickangle=0,
+        xaxis_tickfont_size=20
+    )
+
+# Display the chart using Streamlit
+    st.plotly_chart(fig)
+    style ='<p style="font-family:sans-serif; color:indianred; font-size: 40px;"'
+    text = f'>You have an {country[0]} Accent 🎉</p>'
+    new = f'{style}{text}'
+    st.markdown(new, unsafe_allow_html=True)
+
+
+
+
     # display the metrics in the sorted order horizontally
-    cols = st.columns(len(sorted_audio))
-    for i, (country, value) in enumerate(sorted_audio.items()):
-        cols[i].metric(label=country, value=str(round(100*value))+'%')
+    #cols = st.columns(len(sorted_audio))
+    #for i, (country, value) in enumerate(sorted_audio.items()):
+      #  cols[i].metric(label=country, value=str(round(100*value))+'%')
