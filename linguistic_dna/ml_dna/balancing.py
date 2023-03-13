@@ -209,8 +209,8 @@ def create_balanced_set(path: str,
         df_test.to_csv(f'{path}test_set.csv', index=False)
 
     # get smallest sample of genderxaccent
-    df_demographics_per_accent = get_demographs_per_accent(df_train)
-    n_female = get_min_num_persons(df_demographics_per_accent)
+    #df_demographics_per_accent = get_demographs_per_accent(df_train)
+    n_female = get_min_num_persons(df_train)
 
     # get client_ids that will be included in balanced data set
     target_ids = get_target_ids(df_train, n_female, n_gender_ratio)
