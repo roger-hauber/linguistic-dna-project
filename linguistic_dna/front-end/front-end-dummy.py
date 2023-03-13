@@ -6,6 +6,10 @@ import streamlit.components.v1 as components
 import requests
 from scipy.io import wavfile
 from scipy.io.wavfile import read
+import time
+import random
+
+
 
 
 
@@ -72,8 +76,6 @@ api_url = 'https://dna-api-roger-hauberr-new-5yrpl53y3a-ew.a.run.app'
 #api_url= "http://127.0.0.1:8080"
 
 if st.button('**Get results!**'):
-    response = requests.post(f'{api_url}/uploadfile', files=data)
-    audio = response.json()
 
     # sort the dictionary by values in descending order
     sorted_audio = dict(sorted(audio.items(), key=lambda item: item[1], reverse=True))
@@ -82,17 +84,3 @@ if st.button('**Get results!**'):
     cols = st.columns(len(sorted_audio))
     for i, (country, value) in enumerate(sorted_audio.items()):
         cols[i].metric(label=country, value=str(round(100*value))+'%')
-
-# For visualizing the dictionary in a matrix:
-
-    #col1, col2, col3, col4, col5 = st.columns(5)
-    #col1.metric('Australian', str(round(100*audio['Australian'])) + '%')
-    #col2.metric('Canadian', str(round(100*audio['Canadian'])) + '%')
-    #col3.metric('British', str(round(100*audio['England'])) + '%')
-    #col4.metric('Indian', str(round(100*audio['Indian'])) + '%')
-    #col5.metric('American', str(round(100*audio['US'])) + '%')
-
-
-
-#st.session_state
-#st.cashing

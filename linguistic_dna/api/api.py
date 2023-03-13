@@ -18,9 +18,9 @@ def create_dict(val1, val2, val3, val4, val5):
     my_dict = {
         "Australian": val1,
         "Canadian": val2,
-        "England": val3,
+        "British": val3,
         "Indian": val4,
-        "US": val5
+        "American": val5
         }
     return my_dict
 
