@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 from tensorflow import keras
 from keras.utils import to_categorical
-from keras import Model, layers, Sequential, regularizers
+from keras import Model, layers, Sequential, regularizers, optimizers
 from keras.layers import Conv2D, MaxPooling2D, Dense, Dropout, Activation, Flatten
 from keras.callbacks import EarlyStopping
 
@@ -67,7 +67,7 @@ def train_model(CNNmodel: Model,
                         y,
                         validation_data=validation_data,
                         validation_split=validation_split,
-                        epochs=100,
+                        epochs=epochs,
                         batch_size=batch_size,
                         callbacks=[es],
                         verbose=verbose)
