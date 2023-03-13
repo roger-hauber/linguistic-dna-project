@@ -45,7 +45,7 @@ def add_filelength(audio_path, df: pd.DataFrame) -> pd.DataFrame:
 
 
 # ONE audio file
-def trim_pad_audio(file, cutoff=4, sr=22050, drop_first_sec = False) -> :
+def trim_pad_audio(file, cutoff=4, sr=22050, drop_first_sec = False):
     """
     Takes an audio file and gets the audio time series from it, trimming or padding
     it to a specified length in seconds (== cutoff)
@@ -68,11 +68,11 @@ def trim_pad_audio(file, cutoff=4, sr=22050, drop_first_sec = False) -> :
 
 
 # ALL audio files
-def trim_pad_dataset(cutoff: int = 4,
+def trim_pad_dataset(audio_path: str,
+                     df: pd.DataFrame,
+                     cutoff: int = 4,
                      sr: int = 22050,
-                     drop_first_sec: bool = False,
-                     audio_path: str,
-                     df: pd.DataFrame) -> list:
+                     drop_first_sec: bool = False) -> list:
     """
     Takes a path with (multiple) audio files and gets the audio time series from each audio file, trimming or padding
     them to a specified length in seconds (== cutoff)
