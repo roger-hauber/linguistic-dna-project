@@ -44,22 +44,8 @@ def add_filelength(audio_path, df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-# ## TO BE CHANGED
-# # load audio files and trim/pad them to the specified length
-# aud_ser = [trim_pad_audio(file, cutoff=7) for file in audio_path + df_mod["path"]]
-
-# # compute MFCC features for the audio files and store them in a numpy array
-# lst_mfcc = []
-# for aud in aud_ser:
-#     lst_mfcc.append(librosa.feature.mfcc(y=aud, n_mfcc=128))
-# arr_mfcc = np.array(lst_mfcc)
-# print('MFCC features computed')
-
-# # normalize the MFCC features
-# arr_mfcc_mmx = np.array((arr_mfcc-np.min(arr_mfcc))/(np.max(arr_mfcc)-np.min(arr_mfcc)))
-
-
-def trim_pad_audio(file, cutoff=4, sr=22050, drop_first_sec = False):
+# ONE audio file
+def trim_pad_audio(file, cutoff=4, sr=22050, drop_first_sec = False) -> :
     """
     Takes an audio file and gets the audio time series from it, trimming or padding
     it to a specified length in seconds (== cutoff)
@@ -81,6 +67,37 @@ def trim_pad_audio(file, cutoff=4, sr=22050, drop_first_sec = False):
     return aud
 
 
+# ALL audio files
+def trim_pad_dataset(cutoff: int = 4,
+                     sr: int = 22050,
+                     drop_first_sec: bool = False,
+                     audio_path: str,
+                     df: pd.DataFrame) -> list:
+    """
+    Takes a path with (multiple) audio files and gets the audio time series from each audio file, trimming or padding
+    them to a specified length in seconds (== cutoff)
+    """
+    aud_ser = [trim_pad_audio(file=file, cutoff=cutoff, sr=sr, drop_first_sec=drop_first_sec)
+               for file in audio_path + df["path"]]
+
+    print('✅ audios trimmed and padded')
+    return aud_ser
+
+
+def get_mfcc(aud_ser: list) -> np.array:
+    """
+    Takes list of trimmed and padded audios and returns acoording mfccs
+    """
+    lst_mfcc = []
+
+    for aud in aud_ser:
+        lst_mfcc.append(librosa.feature.mfcc(y=aud))
+    arr_mfcc = np.array(lst_mfcc)
+
+    print('✅ MFCC features computed')
+    return arr_mfcc
+
+
 def mfcc_get_minmax(arr: np.array) -> tuple[float, float]:
     """
     Takes an mfcc array "arr" and calculated its min and max
@@ -98,6 +115,15 @@ def normalizer(arr: np.array, arr_min: float, arr_max: float) -> np.array:
     return arr_norm
 
 
+def adding_dims(arr: np.array, axis=-1) -> np.array:
+    """
+    Adjusts the input shape before training the model by adding one dimension to an array
+    """
+    X_expand_dims = np.expand_dims(arr, axis=axis)
+    return X_expand_dims
+
+
+# CAUTION: might not work because we need to save the overall min/max of X_train to adjust X_test
 def get_norm_mfcc(aud):
     """
     Take an audio time series "aud" and get the mfcc from it and then normalize the resulting array.
@@ -108,7 +134,7 @@ def get_norm_mfcc(aud):
 
     return mfcc_norm
 
-
+# CAUTION: might not work because we need to save the overall min/max of X_train to adjust X_test
 def preprocess(file, cutoff=4, sr=22050):
      """
      Combine both steps: first make audio time series and trim pad and then get the mfcc and normalize.
