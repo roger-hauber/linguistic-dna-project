@@ -72,6 +72,16 @@ api_url = 'https://dna-api-roger-hauberr-new-5yrpl53y3a-ew.a.run.app'
 
 
 if st.button('**Get 5 classifications !**'):
+    t_end = time.time() + 25
+    flags = [':uk:',':flag-au:',':flag-us:',':flag-ca:']
+    t = st.empty()
+    while time.time() < t_end:
+
+        t.markdown(f'''
+                {flags[0]}{flags[1]}{flags[2]}{flags[3]}
+                ''')
+        random.shuffle(flags)
+        time.sleep(0.5)
     response = requests.post(f'{api_url}/uploadfile', files=data)
     audio = response.json()
 
