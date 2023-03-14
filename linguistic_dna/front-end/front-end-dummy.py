@@ -80,7 +80,7 @@ if st.button('**Get results!**'):
     #time.sleep(4)
 
     # Display a balloons message before showing the plot
-    #st.balloons()
+    st.balloons()
 
     # sort the dictionary by values in descending order
     sorted_audio = dict(sorted(audio.items(), key=lambda item: item[1], reverse=True))
