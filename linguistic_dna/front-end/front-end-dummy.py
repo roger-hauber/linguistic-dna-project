@@ -12,15 +12,18 @@ import plotly.graph_objects as go
 
 
 
+
+
+
 st.set_page_config(page_title="Linguistic DNA",
                    page_icon="💬")
 
-st.sidebar.success("Find your accent 📉")
 
-#st.title(':light-blue-70[Linguistic DNA]:dna:')
 st.title('Linguistic DNA 🧬')
 
+st.markdown('Find out about your linguistic 🧬 here!')
 
+#if st.button('Get your Linguistic 🧬'):
 file = st.file_uploader(':blue[**Upload audio file**]', type=['wav'])
 
 if file is not None:
@@ -70,24 +73,30 @@ if wav_audio_data is not None:
 
 api_url = 'https://dna-api-roger-hauberr-5yrpl53y3a-ew.a.run.app'
 
+col1, col2 = st.columns(2)
 
-if st.button('**Get 5 classifications !**'):
-    t_end = time.time() + 25
-    flags = [':uk:',':flag-au:',':flag-us:',':flag-ca:']
+if col1.button('**Get 5 classifications !**'):
+    t_end = time.time() + 30
+    flags = [':uk:',':flag-au:',':flag-us:',':flag-ca:',':flag-in:']
     t = st.empty()
-    while time.time() < t_end:
 
+    while time.time() < t_end:
         t.markdown(f'''
-                {flags[0]}{flags[1]}{flags[2]}{flags[3]}
-                ''')
+            <span style="font-size: 8em">{flags[0]}</span>
+            <span style="font-size: 8em">{flags[1]}</span>
+            <span style="font-size: 8em">{flags[2]}</span>
+            <span style="font-size: 8em">{flags[3]}</span>
+            <span style="font-size: 8em">{flags[4]}</span>
+        ''', unsafe_allow_html=True)
         random.shuffle(flags)
         time.sleep(0.5)
+
+    else:
+        t.markdown('')
+
     response = requests.post(f'{api_url}/uploadfile', files=data)
     audio = response.json()
 
-# Add a timer before displaying the plot
-    #st.write('Wait for your results ⏳')
-    #time.sleep(4)
 
     # Display a balloons message before showing the plot
     st.balloons()
@@ -107,7 +116,7 @@ if st.button('**Get 5 classifications !**'):
     fig = go.Figure(go.Bar(
         x=country ,
         y=[accent * 100 for accent in accents],
-        marker_color=['#1f77b4' if i==0 else 'indianred' for i in range(len(country))],  # Highlight first bar with red color
+        marker_color=['coral' if i==0 else 'lightblue' for i in range(len(country))],  # Highlight first bar with red color
         text=percentages,  # Add percentages as text on top of bars
         textposition='auto',  # Automatically position text on top of bars
         texttemplate='%{text}%',
@@ -120,7 +129,7 @@ if st.button('**Get 5 classifications !**'):
 
 # Display the chart using Streamlit
     st.plotly_chart(fig)
-    style ='<p style="font-family:sans-serif; color:indianred; font-size: 40px;"'
+    style ='<p style="font-family:sans-serif; color:coral; font-size: 40px;"'
     text = f'>You have an {country[0]} Accent 🎉</p>'
     new = f'{style}{text}'
     st.markdown(new, unsafe_allow_html=True)
@@ -128,27 +137,24 @@ if st.button('**Get 5 classifications !**'):
 
 
 
-    # display the metrics in the sorted order horizontally
-    #cols = st.columns(len(sorted_audio))
-    #for i, (country, value) in enumerate(sorted_audio.items()):
-      #  cols[i].metric(label=country, value=str(round(100*value))+'%')
+        # display the metrics in the sorted order horizontally
+        #cols = st.columns(len(sorted_audio))
+        #for i, (country, value) in enumerate(sorted_audio.items()):
+        #  cols[i].metric(label=country, value=str(round(100*value))+'%')
 
 
-
-
-
-if st.button('**Get binary classifications !**'):
+if col2.button('**Get binary classification !**'):
     response = requests.post(f'{api_url}/binary', files=data)
     audio = response.json()
 
-# Add a timer before displaying the plot
-    #st.write('Wait for your results ⏳')
-    #time.sleep(4)
+    # Add a timer before displaying the plot
+        #st.write('Wait for your results ⏳')
+        #time.sleep(4)
 
-    # Display a balloons message before showing the plot
-    #st.balloons()
+        # Display a balloons message before showing the plot
+        #st.balloons()
 
-    # sort the dictionary by values in descending order
+        # sort the dictionary by values in descending order
     sorted_audio = dict(sorted(audio.items(), key=lambda item: item[1], reverse=True))
 
 
@@ -163,7 +169,7 @@ if st.button('**Get binary classifications !**'):
     fig = go.Figure(go.Bar(
         x=country ,
         y=[accent * 100 for accent in accents],
-        marker_color=['#1f77b4' if i==0 else 'indianred' for i in range(len(country))],  # Highlight first bar with red color
+        marker_color=['coral' if i==0 else 'lightblue' for i in range(len(country))],  # Highlight first bar with red color
         text=percentages,  # Add percentages as text on top of bars
         textposition='auto',  # Automatically position text on top of bars
         texttemplate='%{text}%',
@@ -174,9 +180,9 @@ if st.button('**Get binary classifications !**'):
         xaxis_tickfont_size=20
     )
 
-# Display the chart using Streamlit
+    # Display the chart using Streamlit
     st.plotly_chart(fig)
-    style ='<p style="font-family:sans-serif; color:indianred; font-size: 40px;"'
+    style ='<p style="font-family:sans-serif; color:coral; font-size: 40px;"'
     text = f'>You have an {country[0]} Accent 🎉</p>'
     new = f'{style}{text}'
     st.markdown(new, unsafe_allow_html=True)
