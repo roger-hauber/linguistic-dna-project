@@ -71,7 +71,7 @@ if wav_audio_data is not None:
 
 
 
-api_url = 'https://dna-api-roger-hauberr-5yrpl53y3a-ew.a.run.app'
+api_url = 'https://dna-api-roger-hauberr-updated-5yrpl53y3a-ew.a.run.app'
 
 col1, col2 = st.columns(2)
 
