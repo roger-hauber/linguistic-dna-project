@@ -32,14 +32,14 @@ def create_binary_dic(val1, val2):
 
 @app.post("/uploadfile")
 async def create_upload_file(wav: bytes = File(...)):
-    app.state.model = tensorflow.keras.models.load_model('cnn_model.h5')
+    app.state.model = tensorflow.keras.models.load_model('cnn_model_5_accents.h5')
     model = app.state.model
     assert model is not None
     #res_arr = preprocess(io.BytesIO(wav), cutoff=7)
     #print(res_arr.shape)
-    res_arr = trim_pad_audio(io.BytesIO(wav), cutoff=7)
-    res_arr_2 = librosa.feature.mfcc(y=res_arr, n_mfcc=128)
-    res_arr_pred = res_arr_2.reshape((1,128,302,1))
+    res_arr = trim_pad_audio(io.BytesIO(wav), cutoff=4, drop_first_sec=True)
+    res_arr_2 = librosa.feature.mfcc(y=res_arr, n_mfcc=20)
+    res_arr_pred = res_arr_2.reshape((1,20,130,1))
     #res_lst = list(res_arr)
 
     pred = model.predict(res_arr_pred)
@@ -52,12 +52,12 @@ async def create_upload_file(wav: bytes = File(...)):
 
 @app.post("/binary")
 async def create_upload_file(wav: bytes = File(...)):
-    app.state.model = tensorflow.keras.models.load_model('...')
+    app.state.model = tensorflow.keras.models.load_model('cnn_model_binary_eng_usa.h5')
     model = app.state.model
     assert model is not None
-    res_arr = trim_pad_audio(io.BytesIO(wav), cutoff=7)
-    res_mfcc = librosa.feature.mfcc(y=res_arr, n_mfcc=128)
-    res_arr_pred = res_mfcc.reshape((1,128,302,1))
+    res_arr = trim_pad_audio(io.BytesIO(wav), cutoff=4, drop_first_sec=True)
+    res_mfcc = librosa.feature.mfcc(y=res_arr, n_mfcc=20)
+    res_arr_pred = res_mfcc.reshape((1,20,130,1))
     #res_lst = list(res_arr)
 
     pred = model.predict(res_arr_pred)

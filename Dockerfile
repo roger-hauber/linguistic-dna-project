@@ -14,6 +14,8 @@ RUN pip install -r requirements.txt
 COPY linguistic_dna/api/api.py api.py
 COPY linguistic_dna/ml_dna/preprocessor.py ml_dna/preprocessor.py
 COPY cnn_model.h5 cnn_model.h5
+COPY cnn_model_binary_eng_usa.h5 cnn_model_binary_eng_usa.h5
+COPY cnn_model_5_accents.h5 cnn_model_5_accents.h5
 
 
 CMD uvicorn api:app --host 0.0.0.0 --port $PORT
