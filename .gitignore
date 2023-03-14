@@ -4,4 +4,4 @@ notebooks/
 *.ipynb
 .env
 __pycache__
-
+linguistic_dna.egg-info
