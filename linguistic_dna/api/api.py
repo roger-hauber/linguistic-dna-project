@@ -11,12 +11,7 @@ app = FastAPI()
 
 ## set up two different model variables
 #model 1 == 5 accents
-app.state.model1 = tensorflow.keras.models.load_model('cnn_model_5_accents.h5')
-
-
-#model 2 == binary
-app.state.model2 = tensorflow.keras.models.load_model('cnn_model_binary_eng_usa.h5')
-
+app.state.model = tensorflow.keras.models.load_model('cnn_model_5_accents.h5')
 
 
 #the fucntion for the hardcoded Dictionary, maybe we can put it somewhere else
@@ -31,19 +26,14 @@ def create_dict(val1, val2, val3, val4, val5):
         }
     return my_dict
 
-def create_binary_dic(val1, val2):
-    binary_dic = {
-        'British': val1,
-        'American': val2
-    }
 
 
 @app.post("/uploadfile")
 async def create_upload_file(wav: bytes = File(...)):
     #app.state.model = tensorflow.keras.models.load_model('cnn_model_5_accents.h5')
     #model = app.state.model
-    model_1 = app.state.model1
-    assert model_1 is not None
+    model = app.state.model1
+    assert model is not None
     #res_arr = preprocess(io.BytesIO(wav), cutoff=7)
     #print(res_arr.shape)
     res_arr = trim_pad_audio(io.BytesIO(wav), cutoff=4, drop_first_sec=True)
@@ -51,7 +41,7 @@ async def create_upload_file(wav: bytes = File(...)):
     res_arr_pred = res_arr_2.reshape((1,20,130,1))
     #res_lst = list(res_arr)
 
-    pred = model_1.predict(res_arr_pred)
+    pred = model.predict(res_arr_pred)
     pred_list = list(pred)
     dic = create_dict(float(pred_list[0][0]),float(pred_list[0][1]),float(pred_list[0][2]),float(pred_list[0][3]), float(pred_list[0][4]))
     #print(type(dic))
@@ -59,24 +49,7 @@ async def create_upload_file(wav: bytes = File(...)):
     #resp_dict = dict(resp=float(res_lst[0][0]))
     return dic
 
-@app.post("/binary")
-async def create_upload_file(wav: bytes = File(...)):
-    #app.state.model = tensorflow.keras.models.load_model('cnn_model_binary_eng_usa.h5')
-    #model = app.state.model
-    model_2 = app.state.model2
-    assert model_2 is not None
-    res_arr = trim_pad_audio(io.BytesIO(wav), cutoff=4, drop_first_sec=True)
-    res_mfcc = librosa.feature.mfcc(y=res_arr, n_mfcc=20)
-    res_arr_pred = res_mfcc.reshape((1,20,130,1))
-    #res_lst = list(res_arr)
 
-    pred = model_2.predict(res_arr_pred)
-    pred_list = list(pred)
-    dic = create_binary_dic(float(pred_list[0][0]),float(pred_list[0][1]))
-    #print(type(dic))
-    #print(dic)
-    #resp_dict = dict(resp=float(res_lst[0][0]))
-    return dic
 
 
 
