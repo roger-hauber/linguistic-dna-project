@@ -19,7 +19,7 @@ st.set_page_config(page_title="Linguistic DNA",
                    initial_sidebar_state='collapsed')
 
 
-api_url = 'https://dna-api-roger-hauberr-5yrpl53y3a-ew.a.run.app'
+#api_url = 'https://dna-api-roger-hauberr-5yrpl53y3a-ew.a.run.app'
 
 
 

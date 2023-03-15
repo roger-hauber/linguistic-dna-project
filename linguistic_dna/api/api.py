@@ -32,7 +32,7 @@ def create_dict(val1, val2, val3, val4, val5):
 async def create_upload_file(wav: bytes = File(...)):
     #app.state.model = tensorflow.keras.models.load_model('cnn_model_5_accents.h5')
     #model = app.state.model
-    model = app.state.model1
+    model = app.state.model
     assert model is not None
     #res_arr = preprocess(io.BytesIO(wav), cutoff=7)
     #print(res_arr.shape)
