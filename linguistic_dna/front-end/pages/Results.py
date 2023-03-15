@@ -67,6 +67,6 @@ fig.update_layout(
 # Display the chart using Streamlit
 st.plotly_chart(fig)
 style ='<p style="font-family:sans-serif; color:coral; font-size: 40px;"'
-text = f'>Your accent is <b>{country[0]}</b> 🎉</p>'
+text = f'>Your main influence is <b>{country[0]}</b> 🎉</p>'
 new = f'{style}{text}'
 st.markdown(new, unsafe_allow_html=True)
