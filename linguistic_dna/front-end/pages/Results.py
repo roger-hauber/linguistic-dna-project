@@ -13,24 +13,24 @@ from streamlit_extras.switch_page_button import switch_page
 
 api_url = st.session_state['api_url']
 data = st.session_state['data']
+#if data is not None:
+#t_end = time.time() + 50
+##flags = [':uk:',':f lag-au:',':flag-us:',':flag-ca:',':flag-in:']
+#t = st.empty()
 
-t_end = time.time() + 50
-flags = [':uk:',':flag-au:',':flag-us:',':flag-ca:',':flag-in:']
-t = st.empty()
+#while time.time() < t_end:
+   # t.markdown(f'''
+       # <span style="font-size: 9em">{flags[0]}</span>
+        #<span style="font-size: 9em">{flags[1]}</span>
+       # <span style="font-size: 9em">{flags[2]}</span>
+       # <span style="font-size: 9em">{flags[3]}</span>
+        #<span style="font-size: 9em">{flags[4]}</span>
+   # ''', unsafe_allow_html=True)
+   # random.shuffle(flags)
+   # time.sleep(0.5)
 
-while time.time() < t_end:
-    t.markdown(f'''
-        <span style="font-size: 9em">{flags[0]}</span>
-        <span style="font-size: 9em">{flags[1]}</span>
-        <span style="font-size: 9em">{flags[2]}</span>
-        <span style="font-size: 9em">{flags[3]}</span>
-        <span style="font-size: 9em">{flags[4]}</span>
-    ''', unsafe_allow_html=True)
-    random.shuffle(flags)
-    time.sleep(0.5)
-
-else:
-    t.markdown('')
+#else:
+    #t.markdown('')
 
 response = requests.post(f'{api_url}/uploadfile', files=data)
 audio = response.json()
