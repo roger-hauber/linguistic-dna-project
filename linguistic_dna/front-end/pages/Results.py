@@ -11,6 +11,11 @@ import random
 import plotly.graph_objects as go
 from streamlit_extras.switch_page_button import switch_page
 
+st.set_page_config(page_title="Linguistic DNA",
+                   page_icon="💬",
+                   layout= 'wide',
+                   initial_sidebar_state='collapsed')
+
 api_url = st.session_state['api_url']
 data = st.session_state['data']
 t_end = time.time() + 3
