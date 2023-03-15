@@ -216,7 +216,7 @@ def create_balanced_set(path: str,
     target_ids = get_target_ids(df_train, n_female, n_gender_ratio)
 
     # create balanced data set, save if save_balanced=True (not the default)
-    df_train_balanced = get_balanced_data(df_train, target_ids)
+    df_train_balanced = get_balanced_data(df_train, target_ids, max_num_samples=max_num_samples)
     if save_balanced:
         save_balanced_set(df_train_balanced, path)
 
