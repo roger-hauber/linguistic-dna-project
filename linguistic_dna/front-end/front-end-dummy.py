@@ -19,6 +19,9 @@ st.set_page_config(page_title="Linguistic DNA",
                    initial_sidebar_state='collapsed')
 
 
+api_url = 'https://dna-api-roger-hauberr-5yrpl53y3a-ew.a.run.app'
+
+
 
 
 st.markdown("<h1 style='text-align: left; color: black; font-size: 80px;'>Linguistic DNA 🧬</h1>", unsafe_allow_html=True)
