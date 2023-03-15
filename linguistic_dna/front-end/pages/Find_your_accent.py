@@ -69,7 +69,7 @@ api_url = 'https://dna-api-roger-hauberr-updated-5yrpl53y3a-ew.a.run.app'
 st.session_state['api_url'] = api_url
 
 
-five_class = st.button('**Get 5 classifications !**')
+five_class = st.button('**Get Result!**')
 if five_class:
     switch_page('Results')
     '''t_end = time.time() + 30
