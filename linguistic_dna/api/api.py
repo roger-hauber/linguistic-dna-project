@@ -36,8 +36,8 @@ async def create_upload_file(wav: bytes = File(...)):
     assert model is not None
     #res_arr = preprocess(io.BytesIO(wav), cutoff=7)
     #print(res_arr.shape)
-    res_arr = trim_pad_audio(io.BytesIO(wav), cutoff=4, drop_first_sec=True)
-    res_arr_2 = librosa.feature.mfcc(y=res_arr, n_mfcc=20)
+    res_arr = trim_pad_audio(io.BytesIO(wav), cutoff=4, sr=48000, drop_first_sec=True)
+    res_arr_2 = librosa.feature.mfcc(y=res_arr, n_mfcc=20, sr=48000)
     res_arr_pred = res_arr_2.reshape((1,20,130,1))
     #res_lst = list(res_arr)
 
