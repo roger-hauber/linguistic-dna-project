@@ -45,7 +45,7 @@ def add_filelength(audio_path, df: pd.DataFrame) -> pd.DataFrame:
 
 
 # ONE audio file
-def trim_pad_audio(file, cutoff=4, sr=22050, drop_first_sec = False):
+def trim_pad_audio(file, cutoff=4, sr=48000, drop_first_sec = False):
     """
     Takes an audio file and gets the audio time series from it, trimming or padding
     it to a specified length in seconds (== cutoff)
@@ -71,7 +71,7 @@ def trim_pad_audio(file, cutoff=4, sr=22050, drop_first_sec = False):
 def trim_pad_dataset(audio_path: str,
                      df: pd.DataFrame,
                      cutoff: int = 4,
-                     sr: int = 22050,
+                     sr: int = 48000,
                      drop_first_sec: bool = False) -> list:
     """
     Takes a path with (multiple) audio files and gets the audio time series from each audio file, trimming or padding
@@ -84,14 +84,14 @@ def trim_pad_dataset(audio_path: str,
     return aud_ser
 
 
-def get_mfcc(aud_ser: list) -> np.array:
+def get_mfcc(aud_ser: list, sr=48000) -> np.array:
     """
     Takes list of trimmed and padded audios and returns acoording mfccs
     """
     lst_mfcc = []
 
     for aud in aud_ser:
-        lst_mfcc.append(librosa.feature.mfcc(y=aud))
+        lst_mfcc.append(librosa.feature.mfcc(y=aud, sr=sr))
     arr_mfcc = np.array(lst_mfcc)
 
     print('✅ MFCC features computed')

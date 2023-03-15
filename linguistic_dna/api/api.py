@@ -9,7 +9,9 @@ import numpy as np
 
 app = FastAPI()
 
-app.state.model = tensorflow.keras.models.load_model('cnn_model.h5')
+## set up two different model variables
+#model 1 == 5 accents
+app.state.model = tensorflow.keras.models.load_model('cnn_model_5_accents.h5')
 
 
 #the fucntion for the hardcoded Dictionary, maybe we can put it somewhere else
@@ -25,23 +27,29 @@ def create_dict(val1, val2, val3, val4, val5):
     return my_dict
 
 
+
 @app.post("/uploadfile")
 async def create_upload_file(wav: bytes = File(...)):
-
+    #app.state.model = tensorflow.keras.models.load_model('cnn_model_5_accents.h5')
+    #model = app.state.model
     model = app.state.model
     assert model is not None
-    res_arr = preprocess(io.BytesIO(wav), cutoff=7)
-    print(res_arr.shape)
-    res_arr_pred = res_arr.reshape((1,128,302,1))
-    res_lst = list(res_arr)
+    #res_arr = preprocess(io.BytesIO(wav), cutoff=7)
+    #print(res_arr.shape)
+    res_arr = trim_pad_audio(io.BytesIO(wav), cutoff=4, sr=48000, drop_first_sec=True)
+    res_arr_2 = librosa.feature.mfcc(y=res_arr, n_mfcc=20, sr=48000)
+    res_arr_pred = res_arr_2.reshape((1,20,130,1))
+    #res_lst = list(res_arr)
 
     pred = model.predict(res_arr_pred)
     pred_list = list(pred)
     dic = create_dict(float(pred_list[0][0]),float(pred_list[0][1]),float(pred_list[0][2]),float(pred_list[0][3]), float(pred_list[0][4]))
-    print(type(dic))
-    print(dic)
+    #print(type(dic))
+    #print(dic)
     #resp_dict = dict(resp=float(res_lst[0][0]))
     return dic
+
+
 
 
 
