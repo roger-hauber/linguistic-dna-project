@@ -27,7 +27,7 @@ st.set_page_config(page_title="Linguistic DNA",
 
 st.markdown("<h1 style='text-align: left; color: black; font-size: 80px;'>Linguistic DNA </h1>", unsafe_allow_html=True)
 
-file_ = open("linguistic-dna-project/linguistic_dna/front-end/DNA.gif", "rb")
+file_ = open("DNA.gif", "rb")
 contents = file_.read()
 data_url = base64.b64encode(contents).decode("utf-8")
 file_.close()
