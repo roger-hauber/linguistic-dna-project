@@ -21,11 +21,11 @@ t = st.empty()
 
 while time.time() < t_end:
     t.markdown(f'''
-        <span style="font-size: 9em">{flags[0]}</span>
-        <span style="font-size: 9em">{flags[1]}</span>
-        <span style="font-size: 9em">{flags[2]}</span>
-        <span style="font-size: 9em">{flags[3]}</span>
-        <span style="font-size: 9em">{flags[4]}</span>
+        <span style="font-size: 8em">{flags[0]}</span>
+        <span style="font-size: 8em">{flags[1]}</span>
+        <span style="font-size: 8em">{flags[2]}</span>
+        <span style="font-size: 8em">{flags[3]}</span>
+        <span style="font-size: 8em">{flags[4]}</span>
     ''', unsafe_allow_html=True)
     random.shuffle(flags)
     time.sleep(0.5)
