@@ -18,6 +18,8 @@ st.set_page_config(page_title="Linguistic DNA",
 
 api_url = st.session_state['api_url']
 data = st.session_state['data']
+
+
 t_end = time.time() + 3
 flags = [':uk:',':flag-au:',':flag-us:',':flag-ca:',':flag-in:']
 t = st.empty()
